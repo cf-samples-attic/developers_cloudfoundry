@@ -68,8 +68,9 @@
         .g-plusone{"data-href" => @canonical_url, "data-size" => "tall"}
     %section.line{:role => "main"}
       =yield
+      %article.container
+        .fb-like{"data-href" => @canonical_url, "data-send" => "true", "data-show-faces" => "true", "data-width" => "650"}
     %footer{:role => "contentinfo"}
-      .fb-like{"data-href" => @canonical_url, "data-send" => "true", "data-show-faces" => "true", "data-width" => "450"}
       %ul
         %li Copyright © 2011 VMware, Inc. All rights reserved.
         %li
