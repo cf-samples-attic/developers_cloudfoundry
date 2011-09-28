@@ -688,16 +688,18 @@ dd {
   margin-bottom: 1em;
 }
 
-.social_buttons{
-    width: 100px;
-    position: absolute;
-    top: 200px;
-    right: 10px;
-    z-index: 5;
+.dc-social-float .tab {
+cursor: pointer;
+height: 38px;
+margin-left: -1px;
 }
-
-ul.social_buttons li {
-    list-style: none;
-    margin-top:5px;
-    margin-bottom: 10px;
+.dc-social-float .dc-social-float-content {
+background: #fff;
+border: 1px solid #bbb;
+padding: 5px 5px 0 5px;
+text-align: center;
 }
+.dc-social-float .dc-social-float-content {
+border-radius: 5px; -webkit-border-radius: 5px;
+}
+.dcssb-btn {margin-bottom: 5px;}
