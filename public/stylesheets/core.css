@@ -687,3 +687,17 @@ dt {
 dd {
   margin-bottom: 1em;
 }
+
+.social_buttons{
+    width: 100px;
+    position: absolute;
+    top: 200px;
+    right: 10px;
+    z-index: 5;
+}
+
+ul.social_buttons li {
+    list-style: none;
+    margin-top:5px;
+    margin-bottom: 10px;
+}

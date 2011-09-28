@@ -9,9 +9,9 @@ configure do
 end
 
 before do
-  @title = "Sample App"
-  hash = JSON.parse ENV['VMC_APP_INSTANCE']
-  @canonical_url = "http://#{hash['uris'].first}"
+  @title = "Developers"
+  @canonical_url = request.url
+  @fb_app_id = ENV['facebook_app_id']
 end
 
 get '/' do
