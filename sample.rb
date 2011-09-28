@@ -9,7 +9,7 @@ configure do
 end
 
 before do
-  @title = "Monica Wilkinson"
+  @title = "Sample App"
   
 end
 

@@ -1,19 +1,86 @@
-%html{'xmlns:og'=>"http://ogp.me/ns#"}
+%html.no-js{:dir => "ltr", :lang => "en",'xmlns:og'=>"http://ogp.me/ns#"}
   %head
-    %title
-      = @title
-    %meta{:property => 'og:type', :content => 'profile'}
-    %meta{:property => 'og:image', :content => 'http://ciberch.cloudfoundry.com/images/me.jpg'}
+    %meta{:charset => "utf-8"}
+    %meta{:content => "IE=edge,chrome=1", "http-equiv" => "X-UA-Compatible"}
+    %title=@title
+    %link{:href => "/stylesheets/core.css", :rel => "stylesheet", :type => "text/css"}
+    %meta{:content => "", :name => "description"}
+    %meta{:content => "VMware", :name => "author"}
+    %meta{:content => "Copyright VMware 2011. All Rights Reserved.", :name => "copyright"}
+    %meta{:content => "juhk3p2B-UhzEjLXtqFwDMVLo5Lmy4ZP-zVe7Gxo2Dw", :name => "google-site-verification"}
+    %link{:href => "/images/favicon.ico", :rel => "shortcut icon"}
+
+    %meta{:property => 'og:type', :content => 'website'}
+    %meta{:property => 'og:image', :content => 'http://cloudfoundry.com/images/me.jpg'}
     %meta{:property => 'og:url', :content => 'http://ciberch.cloudfoundry.com'}
     %meta{:property => 'og:description', :content => 'Who is ciberch ?'}
-    %link{:rel=>'stylesheet', :href=>'/stylesheets/style.css', :type => "text/css"}
-  %body
-    .container_12
-      .grid_12
-        .grid_3
-          %img.small{:src => '/images/me.jpg'}
-        .grid_8
-          %h1= @title
-          %h3="Is <a href='http://ciberch.cloudfoundry.com'>@ciberch</a>. Everywhere. Except Facebook"
-      .clear
+    :javascript
+      (function() {
+        var url = ('https:' == document.location.protocol ? 'https://' : 'http://') + 'ajax.googleapis.com/ajax/libs/jquery/1.5.2/jquery.min.js';
+        document.write(unescape('%3Cscript src="' + url + '" type="text/javascript"%3E%3C/script%3E'));
+      })();
+
+  %body#your-app-id
+    #ie{:style => "display: none;"}
+      .container
+        %h1 It looks like you're using an older version of Internet Explorer.
+        %p Please upgrade to the latest version of a modern browser.
+        %ul
+          %li
+            %a{:href => "http://www.apple.com/safari/download/", :rel => "external", :title => "Apple - Safari - Download the world's most innovative browser."} Safari
+          %li
+            %a{:href => "http://firefox.com", :rel => "external", :title => "Mozilla - Firefox web browser"} Firefox
+          %li
+            %a{:href => "http://google.com/chrome", :rel => "external", :title => "Google Chrome - Get a fast new browser. For PC, Mac, and Linux"} Chrome
+          %li
+            %a{:href => "http://ie9enhanced.com", :rel => "external"} Internet Explorer
+    %header{:role => "banner"}
+      %nav
+        %hgroup.line.container
+          %h1.unit.size1of2
+            %a{:href => "/", :rel => "home"}
+              %span.cloud> Cloud
+              Foundry
+            =@title
+          %h2.unit.size1of2.last
+            %a#vmware{:href => "http://vmware.com", :rel => "external"} VMware
+      %nav#secondary
+        %ul.container
+          %li
+            %a{:href => "http://blog.cloudfoundry.com", :rel => "external"} Blog
+          %li
+            %a{:href => "http://cloudfoundry.org", :rel => "external"} Open Source
+          %li.new
+            %a{:href => "http://cloudfoundry.org/leads", :rel => "external"} Community Leads
+          %li
+            %a{:href => "http://support.cloudfoundry.com", :rel => "external"} Support
+          %li
+            %a{:href => "/faq"} FAQ
+          %li
+            %a{:href => "/jobs"} Jobs
+      %p#beta beta
+    %section.line{:role => "main"}
       =yield
+    %footer{:role => "contentinfo"}
+      %ul
+        %li Copyright © 2011 VMware, Inc. All rights reserved.
+        %li
+          %a{:href => "/jobs"} We're Hiring!
+        %li
+          %a{:href => "http://cloudfoundry.org", :rel => "external"} Cloud Foundry Open Source Community
+        %li
+          %a{:href => "/terms"} Terms
+        %li
+          %a{:href => "/legal"} Legal
+        %li
+          %a{:href => "http://www.vmware.com/help/privacy.html", :rel => "external"} Privacy
+    :javascript
+      var _gaq = _gaq || [];
+      _gaq.push(['_setAccount', 'UA-22181585-1']);
+      _gaq.push(['_trackPageview']);
+
+      (function() {
+        var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+        ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+      })();
