@@ -11,16 +11,24 @@
     %link{:href => "/images/favicon.ico", :rel => "shortcut icon"}
 
     %meta{:property => 'og:type', :content => 'website'}
-    %meta{:property => 'og:image', :content => 'http://cloudfoundry.com/images/me.jpg'}
-    %meta{:property => 'og:url', :content => 'http://ciberch.cloudfoundry.com'}
-    %meta{:property => 'og:description', :content => 'Who is ciberch ?'}
+    %meta{:property => 'og:image', :content => 'http://cloudfoundry.com/images/cloud_foundry_logo.png'}
+    %meta{:property => 'og:url', :content => @canonical_url}
+    %meta{:property => 'og:description', :content => 'Developers @ CloudFoundry'}
     :javascript
       (function() {
         var url = ('https:' == document.location.protocol ? 'https://' : 'http://') + 'ajax.googleapis.com/ajax/libs/jquery/1.5.2/jquery.min.js';
         document.write(unescape('%3Cscript src="' + url + '" type="text/javascript"%3E%3C/script%3E'));
       })();
-
   %body#your-app-id
+    #fb-root
+    :javascript
+      (function(d, s, id) {
+        var js, fjs = d.getElementsByTagName(s)[0];
+        if (d.getElementById(id)) {return;}
+        js = d.createElement(s); js.id = id;
+        js.src = "//connect.facebook.net/en_US/all.js#xfbml=1";
+        fjs.parentNode.insertBefore(js, fjs);
+      }(document, 'script', 'facebook-jssdk'));
     #ie{:style => "display: none;"}
       .container
         %h1 It looks like you're using an older version of Internet Explorer.
@@ -62,6 +70,7 @@
     %section.line{:role => "main"}
       =yield
     %footer{:role => "contentinfo"}
+      .fb-like{"data-href" => @canonical_url, "data-send" => "true", "data-show-faces" => "true", "data-width" => "450"}
       %ul
         %li Copyright © 2011 VMware, Inc. All rights reserved.
         %li
