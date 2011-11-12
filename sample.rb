@@ -14,9 +14,9 @@ end
 before do
 
   # Example of how to only allow https
-  unless (ENV['bypass_ssl'] && request.secure?)
-    halt 401, 'This website can only be accessed over SSL'
-  end
+  #unless (ENV['bypass_ssl'] && request.secure?)
+  #  halt 401, 'This website can only be accessed over SSL'
+  #end
 
   @title = "Developers"
   @canonical_url = request.url
@@ -37,6 +37,8 @@ end
 post '/login' do
   email = params[:email]
   password = params[:password]
+
+  puts "Unsecure request BOOO" unless request.secure?
 
   if (email && password)
     @vmcclient = VMC::Client.new(@@target)
