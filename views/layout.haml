@@ -57,6 +57,12 @@
             =@title
           %h2.unit.size1of2.last
             %a#vmware{:href => "http://vmware.com", :rel => "external"} VMware
+        -if (session.has_key? :email)
+          %hgroup.line.container.right
+            Welcome
+            %strong=session[:email]
+            |
+            %a{:href => "/logout"} Logout
       %nav#secondary
         %ul.container
           %li
@@ -73,7 +79,31 @@
             %a{:href => "/jobs"} Jobs
       %p#beta beta
     %section.line{:role => "main"}
-      =yield
+      %article.container
+        %div{:style =>(session.has_key?(:email) ? "" : "float: left; width: 70%;")}
+          =yield
+        %div{:style =>(session.has_key?(:email) ? "display:none" : "float: left; width: 35%;")}
+          .center{:style => "margin-top: 1.5em"}
+            %img.center{:alt => "Cloud Foundry", :height => "50", :src => "/images/logo-small.png", :width => "325"}/
+          %form{:action => "/login", :method => "post", :novalidate => ""}
+            .prominent
+              -if (flash[:error])
+                .error{:style => "color:red"}
+                  %span.flash=flash[:error]
+                  - flash[:error] = nil
+                  %a{:href=>"mailto:support@cloudfoundry.com?subject=Password-Reset"}Forgot password?
+              %label{:for => "username"} Email
+              %input#username{:autofocus => "autofocus", :name => "email", :type => "email", :value => ""}
+                %label{:for => "password"} Password
+                %input#password{:name => "password", :type => "password"}
+            .buttons
+              %button{:type => "submit"} Login
+              %span.button-alt
+                or
+                %a{:href => "http://www.cloudfoundry.com/signup"} sign up
+                for CloudFoundry.com
+            / .buttons
+
       %article.container
         .fb-like{"data-href" => @canonical_url, "data-send" => "true", "data-show-faces" => "true", "data-width" => "650"}
     %footer{:role => "contentinfo"}
