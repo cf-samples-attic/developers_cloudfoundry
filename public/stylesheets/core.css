@@ -707,3 +707,9 @@ border-radius: 5px; -webkit-border-radius: 5px;
 /* Reduce the giant login fonts */
 .prominent, .buttons {margin-left: 10px; font-size: smaller;}
 
+/* app gallery */
+.app_header{float:left; display: inline}
+.app_header .app_image {float:left; display: inline; width:30%}
+.app_header .app_description {float:left; margin-top:30px; display: inline; width:70%}
+input.short {width:400px}
+.clear {clear:both;display:block;}

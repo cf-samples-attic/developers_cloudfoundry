@@ -1,8 +1,6 @@
 %h1=@title
 %dl
-  %dt Section 1
-  %dd
-    %p Content 1
-  %dt Section 2
-  %dd
-    %p Content 2
+  -@links.each do |key, val|
+    %dt=key
+    %dd
+      %a{:href=>"#{val[:url]}/new_copy"}=val[:display_name]

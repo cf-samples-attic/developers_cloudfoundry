@@ -1,0 +1,28 @@
+%dl
+  .app_header
+    .app_image
+      %img{:src => @thumb_url}
+    .app_description
+      %h1=@title
+      %p=@app.description
+
+  .clear
+  %form{:action=> "/apps/#{@app_name}/do_copy", :method => :post}
+    %dd
+      %label{:for=>'source_code'} Source code
+      %input{:name=>'source_code', :type => 'text', :value => @zip_url}
+    %dd
+      %label{:for => 'app_name'} App Name
+      %input.short{:name => 'app_name', :type => 'text', :value => @new_name}
+      %span .cloudfoundry.com
+
+
+    -@env_vars.each do |env_var, env_value|
+      %dd
+        %label{:for=>env_var}=env_var
+        %input.short{:type=>'text', :value =>env_value }
+
+    -if session[:email]
+      %dd
+        .buttons
+          %button{:type => 'submit', :enabled => false} Push
