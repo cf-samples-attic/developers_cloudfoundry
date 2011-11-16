@@ -10,6 +10,7 @@ class App
 
   field :app_id, :type => Integer
   field :app_urls, :type => Array
+  field :app_type, :type => String
   field :display_name, :type => String
   field :description, :type => String
   field :instances, :type => Integer, :default => 1
