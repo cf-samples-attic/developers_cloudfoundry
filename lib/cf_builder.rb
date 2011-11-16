@@ -1,7 +1,6 @@
 require 'tmpdir'
 require 'open-uri'
 require 'zip/zipfilesystem'
-require 'pry'
 
 # Original Author: Dave McCrory in repo cf-meta
 module CloudFoundry
