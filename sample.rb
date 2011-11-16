@@ -115,7 +115,7 @@ def build_app
 
   #env vars
   @env_vars = {}
-  @env_vars['BOX_API_KEY'] = "odupd73goklgen7dygaf6ex83j016hbq"
+  @env_vars['BOX_API_KEY'] = "enter your key here"
 
   haml :new_copy
 end
@@ -153,8 +153,7 @@ def clone_app
       puts "Creating app from #{extracted_dir}"
       builder.create_app(@vmcclient, params[:new_name], params[:app_type], 'location' => extracted_dir, 'upload' => true)
 
-      #TODO: Create/bind services
-      #TODO: Set env vars
+      #TODO: Create/bind services once we have manifest
 
       env_array = []
       if (params[:env_vars])
