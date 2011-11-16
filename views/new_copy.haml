@@ -10,17 +10,26 @@
   %form{:action=> "/apps/#{@app_name}/do_copy", :method => :post}
     %dd
       %label{:for=>'source_code'} Source code
-      %input{:name=>'source_code', :type => 'text', :value => @zip_url}
+      %input.short{:name=>'source_code', :type => 'text', :value => @app.git_repo}
+      %span /zipball/master
     %dd
-      %label{:for => 'app_name'} App Name
-      %input.short{:name => 'app_name', :type => 'text', :value => @new_name}
+      %label{:for=>'commit'} Commit
+      %input.short{:type => "text", :name =>"commit", :value => @commit}
+    %dd
+      %label{:for => 'new_name'} App Name
+      %input.short{:name => 'new_name', :type => 'text', :value => @new_name}
       %span .cloudfoundry.com
+    %dd
+      %label{:for => 'app_type'} App Type
+      %input.short{:name =>'app_type', :type => 'text', :value => @app.app_type}
 
-
+    -env_var_names=[]
     -@env_vars.each do |env_var, env_value|
       %dd
+        -env_var_names << env_var
         %label{:for=>env_var}=env_var
-        %input.short{:type=>'text', :value =>env_value }
+        %input.short{:type=>'text', :value =>env_value, :name => env_var }
+    %input{:type => 'hidden', :value => env_var_names.join(','), :name => "env_vars"}
 
     -if session[:email]
       %dd
