@@ -39,6 +39,15 @@ module CloudFoundry
       end
     end
 
+    def exists?
+      begin
+        read_info
+        return true
+      rescue VMC::Client::NotFound => ex
+        return false
+      end
+    end
+
     def start()
       read_info()
 

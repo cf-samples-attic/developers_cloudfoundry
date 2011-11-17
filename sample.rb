@@ -70,8 +70,7 @@ end
 get '/' do
   @links = {}
   #temp code
-  @links['Ruby'] = {:display_name => "Ruby Box.net", :url => "/apps/boxnet-ruby" }
-  @links['Spring'] = {:display_name => "Spring Box.net", :url => "/apps/boxnet-spring"}
+  @links['Ruby'] = {:display_name => "Ruby Box.net", :url => "/apps/box-rebuilt-ruby" }
 
   haml :index
 
@@ -82,7 +81,7 @@ get '/apps/:app_name/get_copy' do |app_name|
 
   @sample_app_info = nil
   #temp code
-  if app_name ==  "boxnet-ruby"
+  if app_name ==  "box-rebuilt-ruby"
     @sample_app_info = boxapp
   end
 
@@ -110,7 +109,7 @@ end
 post '/apps/:app_name/deploy' do |app_name|
   #temp code
   @sample_app_info = nil
-  if app_name ==  "boxnet-ruby"
+  if app_name ==  "box-rebuilt-ruby"
     @sample_app_info = boxapp
   end
 
@@ -127,7 +126,7 @@ post '/apps/:app_name/deploy' do |app_name|
       end
 
       app = CloudFoundry::App.new(@vmcclient, @app_info)
-      app.create
+      app.create unless (app.exists?)
       app.copy_code
       app.start
 
