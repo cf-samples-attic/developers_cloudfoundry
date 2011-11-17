@@ -6,4 +6,4 @@ gem 'json'
 gem 'haml'
 gem 'vmc'
 gem 'zip', "~> 2.0.2"
-gem 'mongoid'
+gem 'mongoid', "~> 2.2.4"
