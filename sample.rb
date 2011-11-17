@@ -117,7 +117,7 @@ post '/apps/:app_name/deploy' do |app_name|
   end
 
   if ( @sample_app_info && session[:email] && params[:new_name])
-    #begin
+    begin
       @app_info = @sample_app_info.clone
       @app_info.app_urls = []
 
@@ -138,9 +138,9 @@ post '/apps/:app_name/deploy' do |app_name|
 
       redirect "http://#{@app_info.app_urls.first}"
 
-    #rescue Exception => ex
-    #  puts "Error #{ex} pushing app"
-    #end
+    rescue Exception => ex
+      puts "Error #{ex} pushing app"
+    end
   else
     flash[:notice] ="Missing required fields"
     redirect "/apps/#{app_name}/new_copy"
