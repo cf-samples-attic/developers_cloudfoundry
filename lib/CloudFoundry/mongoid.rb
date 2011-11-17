@@ -1,7 +1,6 @@
 require 'mongoid'
 require 'mongo/connection'
 
-
 include Mongo
 include Mongoid
 

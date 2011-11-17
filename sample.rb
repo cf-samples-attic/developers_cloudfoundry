@@ -4,9 +4,9 @@ require 'json'
 require 'vmc/client'
 require 'rack-flash'
 
-require_relative 'lib/app'
-require_relative 'lib/cf_mongoid'
-require_relative 'lib/cf_builder'
+require_relative 'lib/CloudFoundry/mongoid'
+require_relative 'lib/CloudFoundry/app_info'
+require_relative 'lib/CloudFoundry/app'
 
 include CloudFoundry
 
@@ -19,7 +19,6 @@ configure do
 end
 
 before do
-
   # Example of how to only allow https
   #unless (ENV['bypass_ssl'] && request.secure?)
   #  halt 401, 'This website can only be accessed over SSL'
@@ -31,7 +30,6 @@ before do
 
   if (session[:auth_token] && @vmcclient.nil? )
     @vmcclient = VMC::Client.new(@@target, session[:auth_token])
-    puts "Created new session for auth_token"
     unless session[:email]
       begin
         if (info = @vmcclient.info)
@@ -70,122 +68,95 @@ get '/logout' do
 end
 
 get '/' do
-  #TODO: Get from mongo db
   @links = {}
-  @links['Ruby'] = {:display_name => "Ruby Box.net", :url => "/apps/boxnet-ruby"}
+  #temp code
+  @links['Ruby'] = {:display_name => "Ruby Box.net", :url => "/apps/boxnet-ruby" }
   @links['Spring'] = {:display_name => "Spring Box.net", :url => "/apps/boxnet-spring"}
 
   haml :index
 
 end
 
-post '/apps/:app_name/new_copy' do |app_name|
+get '/apps/:app_name/get_copy' do |app_name|
   @app_name = app_name
-  build_app if app_name ==  "boxnet-ruby"
-end
 
-get '/apps/:app_name/new_copy' do |app_name|
-  @app_name = app_name
-  build_app if app_name ==  "boxnet-ruby"
-end
+  @sample_app_info = nil
+  #temp code
+  if app_name ==  "boxnet-ruby"
+    @sample_app_info = boxapp
+  end
 
-def build_app
-  # Find the app if its browsable
-  @app = App.new
-  @app.display_name = "Box.net Ruby Sample"
-  @app.app_urls = ["box-rebuilt.cloudfoundry.com"]
-  @title = @app.display_name
-  @app.description = "A starter Box.net application which showcases accessing files and folders as well as sharing."
+  halt unless @sample_app_info
+
+  @sample_app_info.env_vars.each do |k,v|
+    @sample_app_info.env_vars[k] = params[k]
+  end
+
+  @title = @sample_app_info.display_name
   @thumb_url = "http://veederline.com.au/wp-content/uploads/2011/07/digital_pub_box_net.jpg"
-  @app.app_type = 'sinatra'
-  # Avatar, name, description
 
-  # GitHub Location
-  @app.git_repo =  "https://github.com/seanrose/box-rebuilt"
-  @commit = "3e26a2f"
-
-  parts =  @app.app_urls.first.split('.')
+  parts =  @sample_app_info.app_urls.first.split('.')
   @new_name = parts[0] + rand(9999).to_i.to_s
 
   if session[:email]
     a,b = session[:email].split '@'
-    @new_name = parts[0] + "-#{@commit}-" + a
+    @new_name = parts[0] + "-#{@sample_app_info.git_commit}-" + a
   end
   #services
-
-  #env vars
-  @env_vars = {}
-  @env_vars['BOX_API_KEY'] = "enter your key here"
 
   haml :new_copy
 end
 
-post '/apps/:app_name/do_copy' do |app_name|
-  @app_name = app_name
-  clone_app if app_name ==  "boxnet-ruby"
-end
+post '/apps/:app_name/deploy' do |app_name|
+  #temp code
+  @sample_app_info = nil
+  if app_name ==  "boxnet-ruby"
+    @sample_app_info = boxapp
+  end
 
-
-def clone_app
-  if (session[:email] && params[:source_code] && params[:new_name] && params[:app_type] && params[:commit])
+  if ( @sample_app_info && session[:email] && params[:new_name])
     #begin
-      builder = CloudFoundry::Builder.new
+      @app_info = @sample_app_info.clone
+      @app_info.app_urls = []
 
-      puts "params are #{params.inspect}"
+      @app_info.display_name = params[:new_name]
 
-      #THE magic
-      commit = params[:commit] #the last commit for that repo on git
-      repo_name = params[:source_code].gsub(/https\:\/\/github.com\//, '').gsub(/\//, "-")
-      extracted_dir = "#{Dir.tmpdir}/#{repo_name}-#{commit}"
-
-      puts "Extracted dir is #{extracted_dir}and repo #{repo_name}"
-
-      unless (Dir.exists? extracted_dir)
-        tmp_file = "#{Dir.tmpdir}raw-#{params[:new_namw]}.zip"
-        zip_url = "#{params[:source_code]}/zipball/master"
-
-        puts "Downloading and unzipping from #{zip_url}"
-        builder.get_app(tmp_file, zip_url)
-        #extracts to extracted_dir
-        builder.unpack(tmp_file, Dir.tmpdir)
+      # Set all the env vars
+      @app_info.env_vars.each do |var_name, val|
+        @app_info.env_vars[var_name] = params[var_name]
       end
 
-      puts "Creating app from #{extracted_dir}"
-      builder.create_app(@vmcclient, params[:new_name], params[:app_type], 'location' => extracted_dir, 'upload' => true)
+      app = CloudFoundry::App.new(@vmcclient, @app_info)
+      app.create
+      app.copy_code
+      app.start
 
-      #TODO: Create/bind services once we have manifest
-
-      env_array = []
-      if (params[:env_vars])
-        var_names = params[:env_vars].split(',')
-        var_names.each do |var_name|
-          env_array << "#{var_name}=#{params[var_name]}"
-        end
-
-        app_hash = @vmcclient.app_info(params[:new_name])
-        app_hash[:env] = env_array
-
-
-        begin
-          @vmcclient.update_app(params[:new_name], app_hash)
-        rescue Exception => ex
-           puts "Could not update env vars due to #{ex} in #{app_hash}"
-        end
-      end
-
-      builder.start_app(params[:new_name])
-
+      # give it a little time
       sleep 2
 
-      redirect "http://#{params[:new_name]}.cloudfoundry.com"
-      #builder.upload_app(nil, extracted_dir)
-      #builder.start_app(params[:app_name])
+      redirect "http://#{@app_info.app_urls.first}"
+
     #rescue Exception => ex
     #  puts "Error #{ex} pushing app"
     #end
   else
-    redirect '/apps/#{app_name}/new_copy'
+    flash[:notice] ="Missing required fields"
+    redirect "/apps/#{app_name}/new_copy"
   end
+end
+
+#temporary
+def boxapp
+  app = AppInfo.new({
+    :display_name => "Box.net Ruby Sample",
+    :app_urls => ["box-rebuilt.cloudfoundry.com"],
+    :framework => 'sinatra',
+    :description => "A starter Box.net application which showcases accessing files and folders as well as sharing.",
+    :git_repo => "https://github.com/seanrose/box-rebuilt",
+    :git_commit => "3e26a2f",
+    :git_branch => 'master',
+    :env_vars => {'BOX_API_KEY' => 'enter your key here'}
+  })
 end
 
 

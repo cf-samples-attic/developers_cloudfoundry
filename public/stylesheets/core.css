@@ -713,3 +713,4 @@ border-radius: 5px; -webkit-border-radius: 5px;
 .app_header .app_description {float:left; margin-top:30px; display: inline; width:70%}
 input.short {width:400px}
 .clear {clear:both;display:block;}
+.advanced{display:none}
