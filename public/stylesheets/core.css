@@ -707,3 +707,7 @@ border-radius: 5px; -webkit-border-radius: 5px;
 /* Reduce the giant login fonts */
 .prominent, .buttons {margin-left: 10px; font-size: smaller;}
 
+/* login form */
+.logged_out_left_content {float: left; width: 65%;}
+.logged_out_right_content{float: left; width: 35%;}
+
