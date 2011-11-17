@@ -58,25 +58,27 @@ post '/login' do
   else
     flash[:error] = "Fill out the form"
   end
-  redirect '/'
+  redirect session[:path]
 end
 
 get '/logout' do
   session.delete :auth_token
   session.delete :email
-  redirect '/'
+  redirect session[:path]
 end
 
 get '/' do
   @links = {}
   #temp code
   @links['Ruby'] = {:display_name => "Ruby Box.net", :url => "/apps/box-rebuilt-ruby" }
+  session[:path] = request.url
 
   haml :index
 
 end
 
 get '/apps/:app_name/get_copy' do |app_name|
+  session[:path] = request.url
   @app_name = app_name
 
   @sample_app_info = nil
@@ -107,6 +109,7 @@ get '/apps/:app_name/get_copy' do |app_name|
 end
 
 post '/apps/:app_name/deploy' do |app_name|
+
   #temp code
   @sample_app_info = nil
   if app_name ==  "box-rebuilt-ruby"
