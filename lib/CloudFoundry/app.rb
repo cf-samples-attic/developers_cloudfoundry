@@ -13,7 +13,14 @@ module CloudFoundry
       @meta = meta
       @uri = "#{@meta.display_name}#{DEFAULT_CF}"
 
-      @manifest = {"env" => @meta.env_array, "name"=>@meta.display_name, "staging"=>{"framework"=>@meta.framework, "runtime"=>@meta.runtime}, "uris"=>[@uri], "instances"=>1, "resources"=>{"memory"=>@meta.memory}}
+      @manifest = {
+         "env" => @meta.env_array,
+         "name"=> @meta.display_name,
+         "staging"=>{"framework"=>@meta.framework, "runtime"=>@meta.runtime},
+         "uris"=>[@uri],
+         "instances"=>1,
+         "resources"=>{"memory"=>@meta.memory}
+      }
     end
 
     def create()
