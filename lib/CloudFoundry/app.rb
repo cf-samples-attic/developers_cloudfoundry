@@ -10,16 +10,16 @@ module CloudFoundry
 
     def initialize(vmc_client, meta)
       @vmcclient = vmc_client
-      @meta = meta
-      @uri = "#{@meta.display_name}#{DEFAULT_CF}"
+      @app_meta = meta
+      @uri = "#{@app_meta.display_name}#{DEFAULT_CF}"
 
       @manifest = {
-         "env" => @meta.env_array,
-         "name"=> @meta.display_name,
-         "staging"=>{"framework"=>@meta.framework, "runtime"=>@meta.runtime},
+         "env" => @app_meta.env_array,
+         "name"=> @app_meta.display_name,
+         "staging"=>{"framework"=>@app_meta.framework, "runtime"=>@app_meta.runtime},
          "uris"=>[@uri],
          "instances"=>1,
-         "resources"=>{"memory"=>@meta.memory}
+         "resources"=>{"memory"=>@app_meta.memory}
       }
     end
 
@@ -28,11 +28,11 @@ module CloudFoundry
     end
 
     def copy_code()
-      extracted_dir = "#{Dir.tmpdir}/#{@meta.repo_name}-#{@meta.git_commit}"
+      extracted_dir = "#{Dir.tmpdir}/#{@app_meta.repo_name}-#{@app_meta.git_commit}"
 
       unless (Dir.exists? extracted_dir)
-        tmp_file = "#{Dir.tmpdir}raw-#{@meta.display_name}.zip"
-        zip_url = "#{@meta.git_repo}/zipball/#{@meta.git_branch}"
+        tmp_file = "#{Dir.tmpdir}raw-#{@app_meta.display_name}.zip"
+        zip_url = "#{@app_meta.git_repo}/zipball/#{@app_meta.git_branch}"
         get(tmp_file, zip_url)
         #extracts to extracted_dir
         unpack(tmp_file, Dir.tmpdir)
@@ -40,9 +40,9 @@ module CloudFoundry
       end
 
       unless get_files_to_pack(extracted_dir).empty?
-        zipfile = "#{Dir.tmpdir}/#{@meta.display_name}.zip"
+        zipfile = "#{Dir.tmpdir}/#{@app_meta.display_name}.zip"
         pack(extracted_dir, zipfile)
-        @vmcclient.upload_app(@meta.display_name, zipfile)
+        @vmcclient.upload_app(@app_meta.display_name, zipfile)
       end
     end
 
@@ -60,13 +60,13 @@ module CloudFoundry
 
       if @info[:state] != 'STARTED' then
         @info[:state] = 'STARTED'
-        @vmcclient.update_app(@meta.display_name, @info)
+        @vmcclient.update_app(@app_meta.display_name, @info)
       end
     end
 
     def read_info
-      @info = @vmcclient.app_info(@meta.display_name)
-      @meta.app_urls = @info[:uris]
+      @info = @vmcclient.app_info(@app_meta.display_name)
+      @app_meta.app_urls = @info[:uris]
     end
 
     #Helper method to download zips from Github
