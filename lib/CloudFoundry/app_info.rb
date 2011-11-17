@@ -33,11 +33,12 @@ module CloudFoundry
     end
 
     def env_array
-      array = []
+      # So developers know where to get the code from
+      array = ["SOURCE_GIT_REPO=#{git_repo}", "SOURCE_GIT_COMMIT=#{git_commit}", "SOURCE_GIT_BRANCH=#{git_branch}"]
       env_vars.each do |key,val|
         array << "#{key}=#{val}"
       end
-      ["SOURCE_GIT_REPO=#{git_repo}", "SOURCE_GIT_COMMIT=#{git_commit}", "SOURCE_GIT_BRANCH=#{git_branch}"]
+
       array
     end
 
