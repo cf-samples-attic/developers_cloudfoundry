@@ -80,9 +80,9 @@
       %p#beta beta
     %section.line{:role => "main"}
       %article.container
-        %div{:style =>(session.has_key?(:email) ? "" : "float: left; width: 65%;")}
+        %div{:class =>(session.has_key?(:email) ? "" : "logged_out_left_content")}
           =yield
-        %div{:style =>(session.has_key?(:email) ? "display:none" : "float: left; width: 35%;")}
+        %div{:class =>(session.has_key?(:email) ? "hidden" : "logged_out_right_content")}
           .center{:style => "margin-top: 1.5em"}
             %img.center{:alt => "Cloud Foundry", :height => "50", :src => "/images/logo-small.png", :width => "325"}/
           %form{:action => "/login", :method => "post", :novalidate => ""}
@@ -93,7 +93,7 @@
                   - flash[:error] = nil
                   %a{:href=>"mailto:support@cloudfoundry.com?subject=Password-Reset"}Forgot password?
               %label{:for => "username"} Email
-              %input#username{:autofocus => "autofocus", :name => "email", :type => "email", :value => ""}
+              %input#username{:autofocus => "autofocus", :name => "email", :type => "email", :value => params[:email]}
                 %label{:for => "password"} Password
                 %input#password{:name => "password", :type => "password"}
             .buttons

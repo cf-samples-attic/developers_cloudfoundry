@@ -9,7 +9,7 @@
   .clear
   %form{:action=> "/apps/#{@app_name}/deploy", :method => :post}
 
-    .advanced
+    .advanced.hidden
       %dd
         %label{:for=>'source_code'} Source code
         %input.short{:name=>'source_code', :type => 'text', :value => @sample_app_info.git_repo, :disabled => true}

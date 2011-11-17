@@ -713,4 +713,8 @@ border-radius: 5px; -webkit-border-radius: 5px;
 .app_header .app_description {float:left; margin-top:30px; display: inline; width:70%}
 input.short {width:400px}
 .clear {clear:both;display:block;}
-.advanced{display:none}
+.hidden{display:none}
+
+/* login form */
+.logged_out_left_content {float: left; width: 65%;}
+.logged_out_right_content{float: left; width: 35%;}
