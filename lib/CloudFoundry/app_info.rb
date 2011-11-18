@@ -9,6 +9,7 @@ module CloudFoundry
 
     field :app_id, :type => Integer
     field :app_urls, :type => Array
+    field :thumb_url, :type => String
     field :display_name, :type => String
     field :description, :type => String
     field :instances, :type => Integer, :default => 1

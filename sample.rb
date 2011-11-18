@@ -94,7 +94,6 @@ get '/apps/:app_name/get_copy' do |app_name|
   end
 
   @title = @sample_app_info.display_name
-  @thumb_url = "http://veederline.com.au/wp-content/uploads/2011/07/digital_pub_box_net.jpg"
 
   parts =  @sample_app_info.app_urls.first.split('.')
   @new_name = parts[0] + rand(9999).to_i.to_s
@@ -152,6 +151,7 @@ def boxapp
   app = AppInfo.new({
     :display_name => "Box.net Ruby Sample",
     :app_urls => ["box-rebuilt.cloudfoundry.com"],
+    :thumb_url => "/images/box_Iphone01a.png",
     :framework => 'sinatra',
     :description => "A starter Box.net application which showcases accessing files and folders as well as sharing.",
     :git_repo => "https://github.com/seanrose/box-rebuilt",
