@@ -52,9 +52,7 @@
         %hgroup.line.container
           %h1.unit.size1of2
             %a{:href => "/", :rel => "home"}
-              %span.cloud> Cloud
-              Foundry
-            =@title
+              %img.center{:alt => "Cloud Foundry", :height => "50", :src => "/images/logo-small.png", :width => "325"}/
           %h2.unit.size1of2.last
             %a#vmware{:href => "http://vmware.com", :rel => "external"} VMware
         -if (session.has_key? :email)
@@ -77,32 +75,36 @@
             %a{:href => "/faq"} FAQ
           %li
             %a{:href => "/jobs"} Jobs
-      %p#beta beta
     %section.line{:role => "main"}
       %article.container
-        %div{:class =>(session.has_key?(:email) ? "" : "logged_out_left_content")}
+        %div{:class =>(session.has_key?(:email) ? "turquoise" : "turquoise logged_out_left_content")}
           =yield
-        %div{:class =>(session.has_key?(:email) ? "hidden" : "logged_out_right_content")}
-          .center{:style => "margin-top: 1.5em"}
-            %img.center{:alt => "Cloud Foundry", :height => "50", :src => "/images/logo-small.png", :width => "325"}/
-          %form{:action => "/login", :method => "post", :novalidate => ""}
-            .prominent
-              -if (flash[:error])
-                .error{:style => "color:red"}
-                  %span.flash=flash[:error]
-                  - flash[:error] = nil
-                  %a{:href=>"mailto:support@cloudfoundry.com?subject=Password-Reset"}Forgot password?
-              %label{:for => "username"} Email
-              %input#username{:autofocus => "autofocus", :name => "email", :type => "email", :value => params[:email]}
-                %label{:for => "password"} Password
-                %input#password{:name => "password", :type => "password"}
-            .buttons
-              %button{:type => "submit"} Login
-              %span.button-alt
-                or
-                %a{:href => "http://www.cloudfoundry.com/signup"} sign up
-                for CloudFoundry.com
-            / .buttons
+        -unless (session.has_key?(:email))
+          .navy.logged_out_right_content
+            %h3{:style => "margin-top: 1.5em"} Log In
+            %hr
+            %form{:action => "/login", :method => "post", :novalidate => ""}
+              .prominent
+                -if (flash[:error])
+                  .error{:style => "color:red"}
+                    %span.flash=flash[:error]
+                    - flash[:error] = nil
+                    %a{:href=>"mailto:support@cloudfoundry.com?subject=Password-Reset"}Forgot password?
+                %label{:for => "username"} Email
+                %input#username{:autofocus => "autofocus", :name => "email", :type => "email", :value => params[:email]}
+                  %label{:for => "password"} Password
+                  %input#password{:name => "password", :type => "password"}
+
+              .buttons
+                %button{:type => "submit"} Log In
+            %hr
+            %h3{:style => "margin: 1.5em"} Don't have an account yet?
+            %p.orange-button
+              %a{:href => "http://www.cloudfoundry.com/signup", :target =>"_blank"}
+                = 'Sign Up'
+                %span for
+                = "Cloud Foundry"
+              / .buttons
 
       %article.container
         .fb-like{"data-href" => @canonical_url, "data-send" => "true", "data-show-faces" => "true", "data-width" => "650"}
