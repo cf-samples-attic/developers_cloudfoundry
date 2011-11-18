@@ -6,10 +6,13 @@ module CloudFoundry
     #has_and_belongs_to_many :service_infos
     #has_many :app_health_snapshots
     #belongs_to :ogp_description
+    embeds_many :app_clone_requests
 
     field :app_id, :type => Integer
     field :app_urls, :type => Array
     field :thumb_url, :type => String
+    field :admin_user, :type => String
+    field :admin_pass, :type => String
     field :display_name, :type => String
     field :description, :type => String
     field :instances, :type => Integer, :default => 1
