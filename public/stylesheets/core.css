@@ -748,3 +748,11 @@ border-radius: 5px; -webkit-border-radius: 5px;
 .logged_out_left_content {float: left; width: 60%; min-height:550px}
 .logged_out_right_content{float: left; width: 29%; min-height:550px}
 
+p.little {
+    font-size: 10px;
+    color: #717074;
+    font-weight: normal;
+    margin-left: 100px;
+    margin-top: 0px;
+}
+
