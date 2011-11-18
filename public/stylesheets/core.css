@@ -282,8 +282,8 @@ header[role=banner] nav#welcome li {
 header[role=banner] nav {
   width: 100%;
   padding: 16px 0;
-  background: #ccc;
-  border-bottom: 3px solid #bbb;
+  /*background: #ccc;*/
+  /*border-bottom: 3px solid #bbb;*/
 }
 
 header[role=banner] h1,
@@ -476,10 +476,10 @@ form {
 }
 
 label {
-  font-weight: bold;
+  /*font-weight: bold;*/
   display: block;
   margin-top: 1em;
-  color: #48b8ea;
+  /*color: #48b8ea;*/
 }
 
 label.checkbox {
@@ -523,6 +523,27 @@ input[type=password] {
 	display: inline-block;
 	margin: 0;
 }
+.orange-button a {
+	  background: -moz-linear-gradient(center top , #FF8D30 0%, #FF7300 100%) repeat scroll 0 0 transparent;
+      background: -webkit-gradient(linear, left top, left bottom, from(#FF8D30), to(#FF7300));
+	  border: 1px solid #883D00;
+	  border-radius: 10px 10px 10px 10px;
+	  box-shadow: 1px 1px 10px 2px #555555;
+	  color: #FFFFFF;
+	  display: block;
+	  font-size: 21px;
+	  height: 69px;
+	  line-height: 69px;
+	  position: relative;
+	  text-align: center;
+	  text-shadow: 1px 1px 1px #9A4704;
+	  width: auto;
+}
+.orange-button a span {
+	font-family: Times,serif;
+	font-style: italic;
+	font-weight: normal;
+}
 
 .buttons .button,
 .buttons button {
@@ -536,26 +557,26 @@ input[type=password] {
   text-align: center;
   text-decoration: none;
   font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-  padding: .5em 2em .55em;
+  padding: 8px 8px 8px;
   text-shadow: 0 1px 1px rgba(0,0,0,.3);
   -webkit-box-shadow: 0 1px 2px rgba(0,0,0,.2);
   -moz-box-shadow:    0 1px 2px rgba(0,0,0,.2);
   box-shadow:         0 1px 2px rgba(0,0,0,.2);
-  -webkit-border-radius: 2em;
-  -moz-border-radius:    2em;
-  border-radius:         2em;
+  -webkit-border-radius: 4px;
+  -moz-border-radius:    4px;
+  border-radius:         4px;
   color: white;
-  border: solid 1px #538312;
+  border: solid 1px #883D00;
   background: #64991e;
-  background: -webkit-gradient(linear, left top, left bottom, from(#7db72f), to(#4e7d0e));
-  background: -moz-linear-gradient(top, #7db72f, #4e7d0e);
+  background: -webkit-gradient(linear, left top, left bottom, from(#FF8D30), to(#FF7300));
+  background: -moz-linear-gradient(top, #FF8D30, #FF7300);
 }
 .buttons .button:hover,
 .buttons button:hover {
   text-decoration: none;
   background: #538018;
-  background: -webkit-gradient(linear, left top, left bottom, from(#6b9d28), to(#436b0c));
-  background: -moz-linear-gradient(top, #6b9d28, #436b0c);
+  background: -webkit-gradient(linear, left top, left bottom, from(#FF7300), to(#FF8D30));
+  background: -moz-linear-gradient(top, #FF7300, #FF8D30);
 }
 .buttons .button:active,
 .buttons button:active {
@@ -671,13 +692,23 @@ nav hgroup + hgroup {
 	text-align: center;
 }
 
-dl {
-  font-size: 1em;
-  background: white;
+.navy {
+  background-color: #042938;
+  color: white;
   padding: .1em 2em;
+}
+.turquoise {
+  background: #0084BD;
+  color: white;
   -webkit-box-shadow: 0 0 15px rgba(0,0,0,.25);
   -moz-box-shadow:    0 0 15px rgba(0,0,0,.25);
-  border-radius: .25em;
+  padding: .1em 2em;
+}
+
+dl {
+  font-size: 1em;
+  padding: .1em 2em;
+
 }
 
 dt {
@@ -716,5 +747,6 @@ input.short {width:400px}
 .hidden{display:none}
 
 /* login form */
-.logged_out_left_content {float: left; width: 65%;}
-.logged_out_right_content{float: left; width: 35%;}
+.logged_out_left_content {float: left; width: 60%; min-height:550px}
+.logged_out_right_content{float: left; width: 29%; min-height:550px}
+
