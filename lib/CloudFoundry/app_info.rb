@@ -46,6 +46,10 @@ module CloudFoundry
       array
     end
 
+    def self.find_by_display_name display_name
+      AppInfo.where(:display_name => display_name).first
+    end
+
   #  def get_memory_for_framework
   #    case @framework
   #      when "sinatra"

@@ -7,6 +7,7 @@ class AppCloneRequest
   field :request_email, :type => String
   field :request_app_name, :type => String
   field :cf_app_name, :type => String
+  field :username, :type => String
 
   validates_presence_of :request_email
   validates_presence_of :request_app_name
@@ -17,6 +18,7 @@ class AppCloneRequest
 
   def generate_cf_app_name
     if request_email
+      parts = app_info.app_urls.first.split('.')
       a,b = request_email.split '@'
       cf_app_name = parts[0] + "-#{app_info.git_commit}-" + a
     end

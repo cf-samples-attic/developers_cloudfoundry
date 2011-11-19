@@ -20,11 +20,10 @@
       %dd
         %label{:for=>'branch'} Branch
         %input.short{:type => "text", :name =>"commit", :value => @sample_app_info.git_branch, :disabled => true}
-
-    %dd
-      %label{:for => 'new_name'} App Name
-      %input.short{:name => 'new_name', :type => 'text', :value => @new_name}
-      %span .cloudfoundry.com
+      %dd
+        %label{:for => 'new_name'} App Name
+        %input.short{:name => 'new_name', :type => 'text', :value => @app_clone_request.cf_app_name}
+        %span .cloudfoundry.com
 
     -@sample_app_info.env_vars.each do |env_var, env_value|
       %dd

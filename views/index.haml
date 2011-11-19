@@ -1,6 +1,10 @@
-%h1=@title
 %dl
-  -@links.each do |key, val|
-    %dt=key
-    %dd
-      %a{:href=>"#{val[:url]}/get_copy"}=val[:display_name]
+  -@links.each do |key, array|
+    %dt=key.upcase
+    %p Sinatra is a lightweight framework for Ruby web development.
+    %h2{:style=> "text-decoration: underline;"} Sample Apps
+    -array.each do |val|
+      %dd
+        %a{:href=>"#{val[:url]}/get_copy"}
+          %img{:src => val[:image]}
+          %h2=val[:display_name]

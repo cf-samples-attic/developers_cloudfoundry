@@ -11,7 +11,7 @@ module CloudFoundry
         Mongoid.configure do |config|
           conn_info = nil
 
-          dbname = 'db'
+          dbname = 'gallery_db'
           if ENV['VCAP_SERVICES']
             services = JSON.parse(ENV['VCAP_SERVICES'])
             services.each do |service_version, bindings|
@@ -25,7 +25,7 @@ module CloudFoundry
             raise "could not find connection info for mongo" unless conn_info
           else
             conn_info = {'hostname' => 'localhost', 'port' => 27017}
-            dbname = "collaboration_#{ENV["RAILS_ENV"]}_db"
+            dbname = "gallery_db"
           end
 
           @@cnx = Mongo::Connection.new(conn_info['hostname'], conn_info['port'], :pool_size => 5, :timeout => 5)
