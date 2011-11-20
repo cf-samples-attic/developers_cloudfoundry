@@ -54,15 +54,19 @@ module CloudFoundry
       app_clone_requests.each do |req|
         return req if (req.request_app_name == options[:request_app_name] && req.request_email == options[:request_email])
       end
-      req = app_clone_requests.build(options)
 
+      puts "About to create a new clone request "
       if (app_urls && app_urls.count > 0)
         parts = app_urls.first.split('.')
-        a,b = req.request_email.split '@'
-        req.cf_app_name = parts[0] + "-#{git_commit}-" + a
-        req.save!
-        return req.reload
+        a,b = options[:request_email].split '@'
+        options[:cf_app_name] = parts[0] + "-#{git_commit}-" + a
+
+        return app_clone_requests.create(options)
       end
+
+
+      return nil
+
     end
 
   #  def get_memory_for_framework
