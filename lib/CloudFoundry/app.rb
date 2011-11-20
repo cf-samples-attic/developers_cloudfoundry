@@ -31,17 +31,24 @@ module CloudFoundry
       extracted_dir = "#{Dir.tmpdir}/#{@app_meta.repo_name}-#{@app_meta.git_commit}"
 
       unless (Dir.exists? extracted_dir)
+        puts "Downloading to directory #{extracted_dir}"
         tmp_file = "#{Dir.tmpdir}raw-#{@app_meta.display_name}.zip"
         zip_url = "#{@app_meta.git_repo}/zipball/#{@app_meta.git_branch}"
         get(tmp_file, zip_url)
         #extracts to extracted_dir
         unpack(tmp_file, Dir.tmpdir)
         extracted_dir
+      else
+        puts "Great news the source repo directory #{extracted_dir} already exists"
       end
 
       unless get_files_to_pack(extracted_dir).empty?
         zipfile = "#{Dir.tmpdir}/#{@app_meta.display_name}.zip"
-        pack(extracted_dir, zipfile)
+        if  File::exists?("#{zipfile}")
+          puts "We already have the packed zip #{zipfile}"
+        else
+          pack(extracted_dir, zipfile)
+        end
         @vmcclient.upload_app(@app_meta.display_name, zipfile)
       end
     end
