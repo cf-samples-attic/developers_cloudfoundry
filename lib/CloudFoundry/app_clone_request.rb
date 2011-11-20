@@ -12,9 +12,6 @@ class AppCloneRequest
   validates_presence_of :request_email
   validates_presence_of :request_app_name
 
-  attr_accessor :cf_app_name
-
-
   def self.find_or_create sample_app_info, options
     sample_app_info.reload.app_clone_requests.each do |req|
       return req if (req.request_app_name == options[:request_app_name] && req.request_email == options[:request_email])

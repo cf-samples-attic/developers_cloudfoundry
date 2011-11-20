@@ -136,9 +136,9 @@ post '/apps/:app_name/reserve' do |app_name|
     halt [401, "Not authorized\n"]
   end
 
-  req = find_request @sample_app_info
+  @app_clone_request = find_request @sample_app_info
 
-  return req.cf_app_name
+  return "http://#{@app_clone_request.cf_app_name}#{CloudFoundry::App::DEFAULT_CF}"
 end
 
 # Client side request initiated by 3rd party for developer to deploy
@@ -148,8 +148,9 @@ get '/apps/:app_name/get_copy' do |app_name|
   @app_name = app_name
   @sample_app_info = find_sample app_name
 
+  @env_vars = {}
   @sample_app_info.env_vars.each do |k,v|
-    @sample_app_info.env_vars[k] = params[k]
+    @env_vars[k] = params[k]
   end
 
   @title = @sample_app_info.display_name
@@ -166,7 +167,7 @@ post '/apps/:app_name/deploy' do |app_name|
   @sample_app_info = find_sample app_name
   @app_clone_request = find_request @sample_app_info
 
-  name_changed = !(params[:external_app_name] == @app_clone_request.cf_app_name)
+  name_changed = !(params[:new_name] == @app_clone_request.cf_app_name)
 
   if (@vmcclient)
     begin
@@ -190,7 +191,7 @@ post '/apps/:app_name/deploy' do |app_name|
       sleep 2
 
       if (name_changed)
-        @app_clone_request.update_attribute :cf_app_name, params[:external_app_name]
+        @app_clone_request.update_attribute :cf_app_name, params[:new_name]
         haml :name_changed
       else
         redirect "http://#{@app_info.app_urls.first}"

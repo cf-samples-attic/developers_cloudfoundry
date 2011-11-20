@@ -9,7 +9,13 @@
   .clear
   %form{:action=> "/apps/#{@app_name}/deploy", :method => :post}
 
-    .advanced.hidden
+    .advanced
+      %dd
+        %label{:for => 'external_email'} External Developer Email
+        %input.short{:name=>'external_email', :type => 'text', :value => params[:external_email]}
+      %dd
+        %label{:for => 'external_app_name'} External App Name
+        %input.short{:name=>'external_app_name', :type => 'text', :value => params[:external_app_name]}
       %dd
         %label{:for=>'source_code'} Source code
         %input.short{:name=>'source_code', :type => 'text', :value => @sample_app_info.git_repo, :disabled => true}
@@ -25,7 +31,7 @@
         %input.short{:name => 'new_name', :type => 'text', :value => @app_clone_request.cf_app_name}
         %span .cloudfoundry.com
 
-    -@sample_app_info.env_vars.each do |env_var, env_value|
+    -@env_vars.each do |env_var, env_value|
       %dd
         %label{:for=>env_var}=env_var
         %input.short{:type=>'text', :value =>env_value, :name => env_var }
