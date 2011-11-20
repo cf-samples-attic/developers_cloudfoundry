@@ -3,6 +3,7 @@ require 'sinatra'
 require 'json'
 require 'vmc/client'
 require 'rack-flash'
+require 'pry'
 
 require_relative 'lib/CloudFoundry/mongoid'
 require_relative 'lib/CloudFoundry/app_info'
@@ -72,18 +73,15 @@ helpers do
   end
 
   def check_developer_info email, app_name
-    halt [401, "Missing developer' app name"] unless app_name # name of app on box
+    halt [401, "Missing developer's app name"] unless app_name # name of app on box
     halt [401, "Missing developer's email"] unless email   #email for developer
   end
 
   def find_request sample_app_info
-    check_developer_info params[:external_email] || session[:email], params[:external_app_name] || "box-rebuilt"
-    sample_app_info.app_clone_requests do |req|
-      return req if req.request_app_name == params[:external_app_name] && req.request_email == params[:external_email]
-    end
-    if session[:email]
-      return sample_app_info.app_clone_requests.find_or_create_by(:request_email => session[:email], :request_app_name => "box-rebuilt")
-    end
+    check_developer_info params[:external_email], params[:external_app_name]
+    req = AppCloneRequest.find_or_create(sample_app_info, {:request_email => params[:external_email], :request_app_name => params[:external_app_name]})
+    return req if req
+
     halt [401, "Could not find app deploy request for developer email= #{params[:external_email]} with app name = #{params[:external_app_name]}"]
   end
 
@@ -138,9 +136,9 @@ post '/apps/:app_name/reserve' do |app_name|
     halt [401, "Not authorized\n"]
   end
 
-  check_developer_info params[:external_email], params[:external_app_name]
+  req = find_request @sample_app_info
 
-  @sample_app_info.app_clone_requests.find_or_create_by(:request_email => params[:external_email], :request_app_name => params[:external_app_name])
+  return req.cf_app_name
 end
 
 # Client side request initiated by 3rd party for developer to deploy

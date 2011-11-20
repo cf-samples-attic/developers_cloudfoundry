@@ -12,16 +12,19 @@ class AppCloneRequest
   validates_presence_of :request_email
   validates_presence_of :request_app_name
 
-  set_callback(:save, :before) do |document|
-    document.generate_cf_app_name unless cf_app_name
-  end
+  attr_accessor :cf_app_name
 
-  def generate_cf_app_name
-    if request_email
-      parts = app_info.app_urls.first.split('.')
-      a,b = request_email.split '@'
-      cf_app_name = parts[0] + "-#{app_info.git_commit}-" + a
+
+  def self.find_or_create sample_app_info, options
+    sample_app_info.reload.app_clone_requests.each do |req|
+      return req if (req.request_app_name == options[:request_app_name] && req.request_email == options[:request_email])
     end
+    req = sample_app_info.app_clone_requests.build(options)
+    parts = sample_app_info.app_urls.first.split('.')
+    a,b = req.request_email.split '@'
+    req.cf_app_name = parts[0] + "-#{sample_app_info.git_commit}-" + a
+    req.save!
+    return req.reload
   end
 
 end
