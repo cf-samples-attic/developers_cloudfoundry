@@ -55,7 +55,6 @@ module CloudFoundry
         return req if (req.request_app_name == options[:request_app_name] && req.request_email == options[:request_email])
       end
 
-      puts "About to create a new clone request "
       if (app_urls && app_urls.count > 0)
         parts = app_urls.first.split('.')
         a,b = options[:request_email].split '@'
