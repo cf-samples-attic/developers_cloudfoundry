@@ -3,7 +3,6 @@ require 'sinatra'
 require 'json'
 require 'vmc/client'
 require 'rack-flash'
-require 'pry'
 
 require_relative 'lib/CloudFoundry/mongoid'
 require_relative 'lib/CloudFoundry/app_info'
@@ -79,10 +78,11 @@ helpers do
 
   def find_request sample_app_info
     check_developer_info params[:external_email], params[:external_app_name]
-    req = AppCloneRequest.find_or_create(sample_app_info, {:request_email => params[:external_email], :request_app_name => params[:external_app_name]})
+    req = sample_app_info.find_or_create_request_to_clone({request_email: params[:external_email], request_app_name: params[:external_app_name]})
     return req if req
 
-    halt [401, "Could not find app deploy request for developer email= #{params[:external_email]} with app name = #{params[:external_app_name]}"]
+    puts "Error requesting clone for #{sample_app_info.inspect}"
+    halt [401, "Could not find or create app deploy request for developer email= #{params[:external_email]} with app name = #{params[:external_app_name]}"]
   end
 
 end

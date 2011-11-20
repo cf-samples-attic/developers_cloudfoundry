@@ -11,7 +11,7 @@ module CloudFoundry
         Mongoid.configure do |config|
           conn_info = nil
 
-          dbname = 'gallery_db'
+          dbname = 'db'
           if ENV['VCAP_SERVICES']
             services = JSON.parse(ENV['VCAP_SERVICES'])
             services.each do |service_version, bindings|

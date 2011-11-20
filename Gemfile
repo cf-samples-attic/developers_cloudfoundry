@@ -8,5 +8,3 @@ gem 'vmc'
 gem 'zip', "~> 2.0.2"
 gem 'mongoid', "~> 2.2.4"
 gem "bson_ext", "~> 1.4"
-
-require 'pry'
