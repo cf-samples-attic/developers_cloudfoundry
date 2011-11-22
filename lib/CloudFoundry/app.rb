@@ -7,6 +7,43 @@ module CloudFoundry
   class App
     PACK_EXCLUSION_GLOBS = ['..', '.', '*~', '#*#', '*.log']
     DEFAULT_CF = ".cloudfoundry.com"
+    MAX_NAME_TRIES = 10
+
+    def self.is_available_app_name? name
+      begin
+        url = "http://#{name}#{DEFAULT_CF}"
+        puts "Checking #{url} if available"
+        response = RestClient.get url
+      rescue Exception => ex
+        puts "#{url} is available "
+        return true
+      end
+      return false
+    end
+
+    def self.find_available_app_name external_email, external_app_name
+      # http://www.ietf.org/rfc/rfc2396.txt
+      # alpha    = lowalpha | upalpha
+      # alphanum = alpha | digit
+      # domainlabel   = alphanum | alphanum *( alphanum | "-" ) alphanum
+      generated_name =  external_app_name.downcase.gsub(/[^-\w]/, '-')
+
+      unless CloudFoundry::App.is_available_app_name?(generated_name)
+        email_parts = external_email.split '@'
+        # Nice name is not available so give them a generated semi safe name
+        generated_name = "#{external_app_name}-#{email_parts.first}"
+        counter = 0
+        while (!CloudFoundry::App.is_available_app_name?(generated_name))
+          counter += 1
+          if (counter > MAX_NAME_TRIES)
+            generated_name = nil
+            break
+          end
+          generated_name = "#{external_app_name}-#{email_parts.first}-#{counter}"
+        end
+      end
+      generated_name
+    end
 
     def initialize(vmc_client, meta)
       @vmcclient = vmc_client
