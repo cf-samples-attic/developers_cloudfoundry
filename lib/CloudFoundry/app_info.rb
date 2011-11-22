@@ -29,6 +29,9 @@ module CloudFoundry
 
     field :env_vars, :type => Hash
 
+    field :starting_url, :type => String
+
+
     index :app_id, :unique => true
     index :display_name, :unique => true
 
@@ -50,21 +53,18 @@ module CloudFoundry
       AppInfo.where(:display_name => display_name).first
     end
 
-    def find_or_create_request_to_clone options={}
+    def find_request_to_clone options={}
       app_clone_requests.each do |req|
         return req if (req.request_app_name == options[:request_app_name] && req.request_email == options[:request_email])
       end
+      nil
+    end
 
-      if (app_urls && app_urls.count > 0)
-        parts = app_urls.first.split('.')
-        a,b = options[:request_email].split '@'
-        options[:cf_app_name] = parts[0] + "-#{git_commit}-" + a
+    def find_or_create_request_to_clone options={}
+      req = find_request_to_clone options
+      return req if req
 
-        return app_clone_requests.create(options)
-      end
-
-
-      return nil
+      return app_clone_requests.create(options)
 
     end
 

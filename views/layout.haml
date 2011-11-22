@@ -5,9 +5,6 @@
     %title=@title
     %link{:href => "/stylesheets/core.css", :rel => "stylesheet", :type => "text/css"}
     %script{:src => "/js/jquery-1.6.4.min.js", :type => "text/javascript"}
-    %script{:src => "/js/jquery.easing.js", :type => "text/javascript"}
-    %script{:src => "/js/jquery.social.share.1.0.min.js", :type => "text/javascript"}
-    %script{:src => "//platform.twitter.com/widgets.js", :type => "text/javascript"}
     %meta{:content => "", :name => "description"}
     %meta{:content => "VMware", :name => "author"}
     %meta{:content => "Copyright VMware 2011. All Rights Reserved.", :name => "copyright"}
@@ -18,32 +15,7 @@
     %meta{:property => 'og:type', :content => 'website'}
     %meta{:property => 'og:image', :content => 'http://cloudfoundry.com/images/logo-small.png'}
     %meta{:property => 'og:url', :content => @canonical_url}
-    %meta{:property => 'og:description', :content => 'Developers @ CloudFoundry'}
-    :javascript
-      (function(d, s, id) {
-        var js, fjs = d.getElementsByTagName(s)[0];
-        if (d.getElementById(id)) {return;}
-        js = d.createElement(s); js.id = id;
-        js.src = "//connect.facebook.net/en_US/all.js#xfbml=1";
-        fjs.parentNode.insertBefore(js, fjs);
-      }(document, 'script', 'facebook-jssdk'));
-
-      $(document).ready(function() {
-        $('#social-share').dcSocialShare({
-          buttons: 'facebook,twitter,plusone,digg,stumbleupon,linkedin',
-          location: 'top',
-          align: 'left',
-          offsetLocation: 50,
-          offsetAlign: 30,
-          width: 80,
-          center: true,
-          centerPx: 577,
-          speedContent: 600,
-          speedFloat: 1600,
-          disableFloat: true,
-          tabText: ''
-        });
-      });
+    %meta{:property => 'og:description', :content => @description}
 
   %body#your-app-id
     #fb-root
@@ -51,7 +23,7 @@
       %nav
         %hgroup.line.container
           %h1.unit.size1of2
-            %a{:href => "/", :rel => "home"}
+            %a{:href => "http://www.cloudfoundry.com", :rel => "home"}
               %img.center{:alt => "Cloud Foundry", :height => "50", :src => "/images/logo-small.png", :width => "325"}
               %p.little= "THE INDUSTRY'S FIRST OPEN PLATFORM AS A SERVICE"
           %h2.unit.size1of2.last
@@ -63,19 +35,6 @@
             |
             %a{:href => "/logout"} Logout
       %nav#secondary
-        %ul.container
-          %li
-            %a{:href => "http://blog.cloudfoundry.com", :rel => "external"} Blog
-          %li
-            %a{:href => "http://cloudfoundry.org", :rel => "external"} Open Source
-          %li.new
-            %a{:href => "http://cloudfoundry.org/leads", :rel => "external"} Community Leads
-          %li
-            %a{:href => "http://support.cloudfoundry.com", :rel => "external"} Support
-          %li
-            %a{:href => "/faq"} FAQ
-          %li
-            %a{:href => "/jobs"} Jobs
     %section.line{:role => "main"}
       %article.container
         %div{:class =>(session.has_key?(:email) ? "turquoise" : "turquoise logged_out_left_content")}
@@ -121,7 +80,6 @@
           %a{:href => "/legal"} Legal
         %li
           %a{:href => "http://www.vmware.com/help/privacy.html", :rel => "external"} Privacy
-    #social-share
     :javascript
       var _gaq = _gaq || [];
       _gaq.push(['_setAccount', 'UA-22181585-1']);

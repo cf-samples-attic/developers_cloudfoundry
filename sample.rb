@@ -23,12 +23,13 @@ configure do
       :admin_user => "seanrose",
       :admin_pass => "badbe",
       :app_urls => ["box-rebuilt.cloudfoundry.com"],
-      :thumb_url => "/images/box-rebuilt-ruby/200.png",
+      :thumb_url => "/images/box-rebuilt-ruby/75.png",
       :framework => 'sinatra',
       :description => "The Box sample app is redesigned interface for interacting with your content on Box. It demonstrates usage of the main functions of the API, including file upload/download, account tree viewing, file preview, and more.",
       :git_repo => "https://github.com/seanrose/box-rebuilt",
       :git_commit => "3e26a2f",
       :git_branch => 'master',
+      :starting_url => "https://www.box.com/developers/services",
       :env_vars => {'BOX_API_KEY' => 'enter your key here'}
     })
   end
@@ -71,20 +72,6 @@ helpers do
     halt [404, "Could not find sample app name #{app_name}\n"]
   end
 
-  def check_developer_info email, app_name
-    halt [401, "Missing developer's app name"] unless app_name # name of app on box
-    halt [401, "Missing developer's email"] unless email   #email for developer
-  end
-
-  def find_request sample_app_info
-    check_developer_info params[:external_email], params[:external_app_name]
-    req = sample_app_info.find_or_create_request_to_clone({request_email: params[:external_email], request_app_name: params[:external_app_name]})
-    return req if req
-
-    puts "Error requesting clone for #{sample_app_info.inspect}"
-    halt [401, "Could not find or create app deploy request for developer email= #{params[:external_email]} with app name = #{params[:external_app_name]}"]
-  end
-
 end
 
 
@@ -113,22 +100,10 @@ get '/logout' do
   redirect session[:path]
 end
 
-get '/' do
-  @links = {}
-  AppInfo.all.each do |app_info|
-    @links[app_info.framework] = [] unless @links[app_info.framework]
-
-    @links[app_info.framework] << {:display_name => app_info.display_name, :url => "apps/#{app_info.display_name}", :image => "/images/#{app_info.display_name}/75.png"}
-  end
-  session[:path] = request.url
-
-  haml :index
-end
 
 # Called by the 3rd party server side to request url for developer
+# Will always generate a new url
 post '/apps/:app_name/reserve' do |app_name|
-  @app_name = app_name
-
   @sample_app_info = find_sample app_name
 
   unless authorized? @sample_app_info
@@ -136,7 +111,24 @@ post '/apps/:app_name/reserve' do |app_name|
     halt [401, "Not authorized\n"]
   end
 
-  @app_clone_request = find_request @sample_app_info
+  halt [401, "Missing developer's app name"] unless params[:external_app_name] # name of app on box
+  halt [401, "Missing developer's email"] unless params[:external_email]   #email for developer
+
+  generated_name =  CloudFoundry::App.find_available_app_name(params[:external_email], params[:external_app_name] )
+
+  @app_clone_request = nil
+  if generated_name
+    @app_clone_request = @sample_app_info.find_or_create_request_to_clone({
+        request_email: params[:external_email],
+        request_app_name: params[:external_app_name],
+        cf_app_name:  generated_name
+    })
+  end
+
+  unless @app_clone_request
+    puts "Error requesting clone for #{@sample_app_info.inspect}"
+    halt [401, "Could not find or create app deploy request for developer email= #{params[:external_email]} with app name = #{params[:external_app_name]}"]
+  end
 
   return "http://#{@app_clone_request.cf_app_name}#{CloudFoundry::App::DEFAULT_CF}"
 end
@@ -155,7 +147,14 @@ get '/apps/:app_name/get_copy' do |app_name|
 
   @title = @sample_app_info.display_name
 
-  @app_clone_request = find_request @sample_app_info
+  unless (params[:external_app_name] || params[:external_email])
+    @warn = "Unauthorized flow. Please start here:"
+  else
+    @app_clone_request = @sample_app_info.find_request_to_clone({request_email: params[:external_email], request_app_name: params[:external_app_name]})
+    unless @app_clone_request
+      @warn = "Could not find deploy request for credentials given. Please start here:"
+    end
+  end
 
   haml :new_copy
 end
@@ -165,48 +164,55 @@ end
 post '/apps/:app_name/deploy' do |app_name|
 
   @sample_app_info = find_sample app_name
-  @app_clone_request = find_request @sample_app_info
-
-  name_changed = !(params[:new_name] == @app_clone_request.cf_app_name)
-
-  if (@vmcclient)
-    begin
-      @app_info = @sample_app_info.clone
-      @app_info.app_urls = []
-
-      @app_info.display_name = params[:new_name]
-
-      # Set all the env vars
-      @app_info.env_vars.each do |var_name, val|
-        @app_info.env_vars[var_name] = params[var_name]
-      end
-
-      app = CloudFoundry::App.new(@vmcclient, @app_info)
-      app.create unless (app.exists?)
-      app.copy_code
-      app.start
-      @app_clone_request.update_attribute :cf_username, session[:email]
-
-      # give it a little time
-      sleep 2
-
-      if (name_changed)
-        @app_clone_request.update_attribute :cf_app_name, params[:new_name]
-        haml :name_changed
-      else
-        redirect "http://#{@app_info.app_urls.first}"
-      end
-
-    rescue Exception => ex
-      puts "Error #{ex} pushing app"
-    end
+  unless (params[:external_app_name] || params[:external_email])
+    @warn = "Unauthorized flow. Please start here:"
   else
-    flash[:notice] = "Please Log In before deploying"
-    redirect "/apps/#{app_name}/new_copy"
+    @app_clone_request = @sample_app_info.find_request_to_clone({request_email: params[:external_email], request_app_name: params[:external_app_name]})
+    unless @app_clone_request
+      @warn = "Could not find deploy request for credentials given. Please start here:"
+    else
+      name_changed = !(params[:new_name] == @app_clone_request.cf_app_name)
+
+      if (@vmcclient)
+        begin
+          @app_info = @sample_app_info.clone
+          @app_info.app_urls = []
+
+          @app_info.display_name = params[:new_name]
+
+          # Set all the env vars
+          @app_info.env_vars.each do |var_name, val|
+            @app_info.env_vars[var_name] = params[var_name]
+          end
+
+          app = CloudFoundry::App.new(@vmcclient, @app_info)
+          app.create unless (app.exists?)
+          app.copy_code
+          app.start
+          @app_clone_request.update_attribute :cf_username, session[:email]
+
+          # give it a little time
+          sleep 2
+
+          if (name_changed)
+            @app_clone_request.update_attribute :cf_app_name, params[:new_name]
+            haml :name_changed and return
+          else
+            redirect "http://#{@app_info.app_urls.first}" and return
+          end
+
+        rescue Exception => ex
+          puts "Error #{ex} pushing app"
+        end
+      else
+        flash[:error] = "Please Log In before deploying"
+      end
+    end
+    haml :new_copy
   end
+
+
 end
-
-
 
 
 

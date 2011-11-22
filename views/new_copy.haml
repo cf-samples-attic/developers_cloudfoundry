@@ -3,40 +3,47 @@
     .app_image
       %img{:src => @sample_app_info.thumb_url}
     .app_description
-      %h1=@title
-      %p=@sample_app_info.description
-
+      %h2=@title
+      %span=@sample_app_info.description
+      %hr
+        %label Source code
+        %a{:href=>@sample_app_info.git_repo, :target=>'_blank'}="#{@sample_app_info.git_repo}"
   .clear
+  -if (@warn)
+    .error
+      %h2 Warning
+      %span.flash=@warn
+      %a#start_url{:href=> @sample_app_info.starting_url}=@sample_app_info.starting_url
+
   %form{:action=> "/apps/#{@app_name}/deploy", :method => :post}
 
-    .advanced
+    %a{:href=>'#', :onclick =>"$('#advanced').show();$(this).hide(); $(this).next().show()"} View Deployment Details
+    %a{:href=>'#', :style => 'display:none', :onclick =>"$('#advanced').hide();$(this).hide(); $(this).prev().show()"} Hide Deployment Details
+    #advanced.hidden
+      %dd
+        %label Environment Variables
+        %ul
+          -@env_vars.each do |env_var, env_value|
+            %li
+              %label{:for=>env_var}=env_var
+              %input.short{:type=>'text', :value =>env_value, :name => env_var }
+      %hr
       %dd
         %label{:for => 'external_email'} External Developer Email
         %input.short{:name=>'external_email', :type => 'text', :value => params[:external_email]}
       %dd
         %label{:for => 'external_app_name'} External App Name
         %input.short{:name=>'external_app_name', :type => 'text', :value => params[:external_app_name]}
+      %hr
       %dd
-        %label{:for=>'source_code'} Source code
-        %input.short{:name=>'source_code', :type => 'text', :value => @sample_app_info.git_repo, :disabled => true}
-        %span /zipball/master
-      %dd
-        %label{:for=>'commit'} Commit
-        %input.short{:type => "text", :name =>"commit", :value => @sample_app_info.git_commit, :disabled => true}
-      %dd
-        %label{:for=>'branch'} Branch
-        %input.short{:type => "text", :name =>"commit", :value => @sample_app_info.git_branch, :disabled => true}
-      %dd
-        %label{:for => 'new_name'} App Name
-        %input.short{:name => 'new_name', :type => 'text', :value => @app_clone_request.cf_app_name}
+        %label{:for => 'new_name'} Cloud Foundry App Name
+        %input.short{:name => 'new_name', :type => 'text', :value => (@app_clone_request ? @app_clone_request.cf_app_name : "")}
         %span .cloudfoundry.com
 
-    -@env_vars.each do |env_var, env_value|
-      %dd
-        %label{:for=>env_var}=env_var
-        %input.short{:type=>'text', :value =>env_value, :name => env_var }
-
-    -if session[:email]
-      %dd
-        .buttons
-          %button{:type => 'submit', :enabled => false} Deploy
+    %dd
+      -if (session[:email])
+        -unless @warn
+          .buttons
+            %button{:type => 'submit', :enabled => false} Deploy
+      -else
+        %h2 **You must be logged in to deploy.
