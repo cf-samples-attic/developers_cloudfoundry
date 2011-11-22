@@ -9,7 +9,12 @@
         %label Source code
         %a{:href=>@sample_app_info.git_repo, :target=>'_blank'}="#{@sample_app_info.git_repo}"
   .clear
-  -if (@warn)
+  -if @fail
+    .error
+      %h2 Error
+      %span.flash=@fail
+      %a#start_url{:href=> @sample_app_info.starting_url}=@sample_app_info.starting_url
+  -elsif (@warn)
     .error
       %h2 Warning
       %span.flash=@warn
@@ -19,24 +24,23 @@
 
     %a{:href=>'#', :onclick =>"$('#advanced').show();$(this).hide(); $(this).next().show()"} View Deployment Details
     %a{:href=>'#', :style => 'display:none', :onclick =>"$('#advanced').hide();$(this).hide(); $(this).prev().show()"} Hide Deployment Details
+    %br
+    %br
     #advanced.hidden
-      %dd
-        %label Environment Variables
-        %ul
-          -@env_vars.each do |env_var, env_value|
-            %li
-              %label{:for=>env_var}=env_var
-              %input.short{:type=>'text', :value =>env_value, :name => env_var }
+      -@env_vars.each do |env_var, env_value|
+        .fieldset
+          %span{:for=>env_var}="#{env_var}:&nbsp;"
+          %input{:type=>'text', :value =>env_value, :name => env_var }
       %hr
-      %dd
-        %label{:for => 'external_email'} External Developer Email
-        %input.short{:name=>'external_email', :type => 'text', :value => params[:external_email]}
-      %dd
-        %label{:for => 'external_app_name'} External App Name
-        %input.short{:name=>'external_app_name', :type => 'text', :value => params[:external_app_name]}
+      .fieldset
+        %span External Developer Email:&nbsp;
+        %input.short{:name=>'external_email', :type => 'text', :value => params[:external_email], :readonly => true}
+      .fieldset
+        %span External App Name:&nbsp;
+        %input.short{:name=>'external_app_name', :type => 'text', :value => params[:external_app_name], :readonly => true}
       %hr
-      %dd
-        %label{:for => 'new_name'} Cloud Foundry App Name
+      .fieldset
+        %label{:for => 'new_name'} Reserved Cloud Foundry App Name
         %input.short{:name => 'new_name', :type => 'text', :value => (@app_clone_request ? @app_clone_request.cf_app_name : "")}
         %span .cloudfoundry.com
 
@@ -46,4 +50,4 @@
           .buttons
             %button{:type => 'submit', :enabled => false} Deploy
       -else
-        %h2 **You must be logged in to deploy.
+        %span **You must be logged in to deploy.

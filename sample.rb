@@ -133,6 +133,10 @@ post '/apps/:app_name/reserve' do |app_name|
   return "http://#{@app_clone_request.cf_app_name}#{CloudFoundry::App::DEFAULT_CF}"
 end
 
+post '/apps/:app_name/get_copy' do |app_name|
+  redirect 'apps/#{app_name}/get_copy'
+end
+
 # Client side request initiated by 3rd party for developer to deploy
 get '/apps/:app_name/get_copy' do |app_name|
   session[:path] = request.url
@@ -147,6 +151,7 @@ get '/apps/:app_name/get_copy' do |app_name|
 
   @title = @sample_app_info.display_name
 
+  @fail = flash[:notice]
   unless (params[:external_app_name] || params[:external_email])
     @warn = "Unauthorized flow. Please start here:"
   else
@@ -196,19 +201,20 @@ post '/apps/:app_name/deploy' do |app_name|
 
           if (name_changed)
             @app_clone_request.update_attribute :cf_app_name, params[:new_name]
-            haml :name_changed and return
+            return haml :name_changed
           else
-            redirect "http://#{@app_info.app_urls.first}" and return
+            return redirect "http://#{@app_info.app_urls.first}"
           end
 
         rescue Exception => ex
           puts "Error #{ex} pushing app"
+          flash[:notice] = "Failed to deploy app #{params[:new_name]} please check name requested or contact support@cloudfoundry.com or start at:"
         end
       else
-        flash[:error] = "Please Log In before deploying"
+        @warn = "Please Log In before deploying"
       end
     end
-    haml :new_copy
+    redirect session[:path]
   end
 
 
