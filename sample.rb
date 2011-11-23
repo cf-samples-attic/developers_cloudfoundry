@@ -25,9 +25,9 @@ configure do
       :app_urls => ["box-rebuilt.cloudfoundry.com"],
       :thumb_url => "/images/box-rebuilt-ruby/75.png",
       :framework => 'sinatra',
-      :description => "The Box sample app is redesigned interface for interacting with your content on Box. It demonstrates usage of the main functions of the API, including file upload/download, account tree viewing, file preview, and more.",
-      :git_repo => "https://github.com/seanrose/box-rebuilt",
-      :git_commit => "3e26a2f",
+      :description => "The Box sample app has a redesigned interface for interacting with your content on Box. It demonstrates usage of the main functions of the API, including file upload/download, account tree viewing, file preview, and more.",
+      :git_repo => "https://github.com/cloudfoundry-samples/box-rebuilt-ruby",
+      :git_commit => "0d85717",
       :git_branch => 'master',
       :starting_url => "https://www.box.com/developers/services",
       :env_vars => {'BOX_API_KEY' => 'enter your key here'}
@@ -133,8 +133,15 @@ post '/apps/:app_name/reserve' do |app_name|
   return "http://#{@app_clone_request.cf_app_name}#{CloudFoundry::App::DEFAULT_CF}"
 end
 
+# Support the POST end point too !
 post '/apps/:app_name/get_copy' do |app_name|
-  redirect 'apps/#{app_name}/get_copy'
+  vars = ''
+  params.each do |key, val|
+    if (key != 'app_name' && key != 'external_email')
+      vars = "#{vars}&#{key}=#{val}"
+    end
+  end
+  redirect "/apps/#{app_name}/get_copy?external_email=#{params[:external_email]}#{vars}"
 end
 
 # Client side request initiated by 3rd party for developer to deploy
