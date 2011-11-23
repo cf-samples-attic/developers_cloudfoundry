@@ -44,6 +44,7 @@ before do
   @title = "Gallery"
   @canonical_url = request.url
   @fb_app_id = ENV['facebook_app_id']
+  @signup_url = "http://www.cloudfoundry.com/signup"
 
   if (session[:auth_token] && @vmcclient.nil? )
     @vmcclient = VMC::Client.new(@@target, session[:auth_token])
@@ -155,6 +156,9 @@ get '/apps/:app_name/get_copy' do |app_name|
   @sample_app_info.env_vars.each do |k,v|
     @env_vars[k] = params[k]
   end
+
+  # All Apps must have promocodes :)
+  @signup_url = "#{@signup_url}/#{@sample_app_info.promocode}"
 
   @title = @sample_app_info.display_name
 

@@ -49,6 +49,10 @@ module CloudFoundry
       array
     end
 
+    def promocode
+      display_name.gsub /[\s\-\_]/, ''
+    end
+
     def self.find_by_display_name display_name
       AppInfo.where(:display_name => display_name).first
     end
