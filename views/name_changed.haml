@@ -1,4 +1,6 @@
 %h1 Success
-%p You have successfully created you Box App on Cloud Foundry. However since you changed the name of your app you need to go back to Box.net and edit the callback uri.
+%span You have successfully created your app on Cloud Foundry. However, since you changed the name of your app you need to go back to
+%a{:href=>@sample_app_info.starting_url} your service provider
+%span and edit the callback uri.
 %p Once you are done you can come back to visit:
 %a{:href => "http://#{@app_clone_request.cf_app_name}#{CloudFoundry::App::DEFAULT_CF}"}= "http://#{@app_clone_request.cf_app_name}#{CloudFoundry::App::DEFAULT_CF}"
