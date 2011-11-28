@@ -66,4 +66,8 @@ get '/' do
 
 end
 
+get '/content' do
+  haml :content, :layout => :simple_layout
+end
+
 
