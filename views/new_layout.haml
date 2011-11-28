@@ -17,6 +17,7 @@
         %meta{:content => "width=device-width, initial-scale=1.0", :name => "viewport"}
           %link{:href => "/images/favicon.ico", :rel => "shortcut icon"}/
           %meta{:content => "all", :name => "robots"}/
+          %link{:href => "/stylesheets/developers.css", :rel => "stylesheet", :type => "text/css"}
           %link{:href => "/stylesheets/print.css", :media => "print", :rel => "stylesheet", :type => "text/css"}/
           %link{:href => "/stylesheets/master.css", :media => "screen", :rel => "stylesheet", :type => "text/css"}/
           /[if lt IE 9 ] <link href="/stylesheets/ie.css" media="screen" rel="stylesheet" type="text/css" />
@@ -47,25 +48,35 @@
                   %span.replaced Cloud Foundry: The Industry's First Open Platform As A Service
             .span-9.last
               .right
-                %form.search-form{:action => "XX", :method => "get"}
-                  %input.search-input{:name => "q", :placeholder => "", :type => "text", :value => ""}/
                 %ul.super-nav
-                  %li
-                    %a{:href => "/signup"} Sign Up
-              #nav
-                %ul
-                  %li
-                    %a{:href => "XX"} Learn
-                  %li
-                    %a{:href => "XX"} Get Started
-                  %li
-                    %a{:href => "XX"} Get Involved
-                  %li
-                    %a{:href => "XX"} Partners
-                  %li
-                    %a{:href => "about.html"} About
+                  -if (session.has_key? :email)
+                    %li
+                      Welcome
+                      %strong=session[:email]
+                      |
+                      %a{:href => "/logout"} Logout
       #main.container
-        =yield
+        .content-wrap
+          -unless (session.has_key?(:email))
+            .hero-wrap.clearfix
+              .hero-left
+                .hero-content
+                  =haml :login
+              .hero-right
+                .tabs
+                  #tab-1.hero.hero-gallery
+                    .hero-content
+                      = content :hero
+          -else
+            .header-wrap.clearfix
+              .site-wrap
+                %h1=@title
+                =content :subhead
+          .site-wrap
+            .container.content
+              .span-15
+                .prepend-top
+                  = yield
     #footer.container
       .site-wrap
         .row
@@ -75,17 +86,17 @@
             %a.youtube.replaced{:href => "http://www.youtube.com/cloudfoundry", :rel => "external", :target => "_blank"} YouTube
           .prepend-2.span-5
             %p
-              %a{:href => "/faq.html"} FAQ
+              %a{:href => "http://www.cloudfoundry.com/faq.html"} FAQ
               |
               %a{:href => "http://support.cloudfoundry.com", :rel => "external"} Forums
               |
               %a{:href => "http://blog.cloudfoundry.com", :rel => "external"} Blog
               |
-              %a{:href => "/jobs.html"} Jobs
+              %a{:href => "http://www.cloudfoundry.com/jobs.html"} Jobs
               |
-              %a{:href => "/terms.html"} Terms
+              %a{:href => "http://www.cloudfoundry.com/terms.html"} Terms
               |
-              %a{:href => "/legal.html"} Legal
+              %a{:href => "http://www.cloudfoundry.com/legal.html"} Legal
               |
               %a{:href => "http://www.vmware.com/help/privacy.html", :rel => "external", :target => "_blank"} Privacy
           .span-5.last.right

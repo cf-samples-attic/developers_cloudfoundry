@@ -1,17 +1,9 @@
-.content-wrap
-  .header-wrap.clearfix
-    .site-wrap
-      %h1 Legal
-      %p.sub-head Sunt dolore drumstick, nulla veniam tempor excepteur tip cow chuck.
-      %a.button-plain{:href => "XX"} Interested? Contact Us.
-  .site-wrap
-    .container.content
-      .span-15
-        .prepend-top
-          %h2 Section 1
-          %p Qui cupidatat aliqua, minim cillum filet mignon pork exercitation prosciutto andouille laborum pancetta. Dolore reprehenderit laboris ullamco frankfurter, boudin excepteur strip steak labore sed kielbasa. Ullamco meatloaf flank, commodo irure tri-tip dolore culpa tail nostrud dolor veniam aute.
-          %h2 Section 2
-          %p Qui cupidatat aliqua, minim cillum filet mignon pork exercitation prosciutto andouille laborum pancetta. Dolore reprehenderit laboris ullamco frankfurter, boudin excepteur strip steak labore sed kielbasa. Ullamco meatloaf flank, commodo irure tri-tip dolore culpa tail nostrud dolor veniam aute.
-          %h2 Section 3
-          %p Qui cupidatat aliqua, minim cillum filet mignon pork exercitation prosciutto andouille laborum pancetta. Dolore reprehenderit laboris ullamco frankfurter, boudin excepteur strip steak labore sed kielbasa. Ullamco meatloaf flank, commodo irure tri-tip dolore culpa tail nostrud dolor veniam aute.
-          %hr.space
+This is where the main content goes.
+
+- content_for :hero do
+  %p.hero-header Header
+  %p.hero-body Body
+
+- content_for :subhead do
+  %p.sub-head Description for this content page
+  %a.button-plain{:href => "#"} Do Something.
