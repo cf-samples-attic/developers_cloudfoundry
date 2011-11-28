@@ -1,56 +1,57 @@
-%dl
-  .app_header
-    .app_image
-      %img{:src => @sample_app_info.thumb_url}
-    .app_description
-      %h2=@title
-      %span=@sample_app_info.description
-      %hr
-        %label Source code
-        %a{:href=>@sample_app_info.git_repo, :target=>'_blank'}="#{@sample_app_info.git_repo}"
-  .clear
-  -if @fail
-    .error
-      %h2 Error
-      %span.flash=@fail
-      %a#start_url{:href=> @sample_app_info.starting_url}=@sample_app_info.starting_url
-      %span OR contact support including your
-      %a{:href =>"mailto:support@cloudfoundry.com?subject=Issues deploying: #{@sample_app_info.display_name} as #{@current_app_name}"}support@cloudfoundry.com
+- content_for :hero do
+  %h1 Deploy to Cloud Foundry
+  %p.small_text Cloud Foundry now gives you the ability to deploy sample open source applications in seconds.
+  %hr
+  %p.hero-header
+    %img{:src => @sample_app_info.thumb_url}
+    %label{:style=>'vertical-align:top;'}=@title
+  %p.hero-body.small_text
+    =@sample_app_info.description
+- content_for :subhead do
+  %p.sub-head.small_text=@sample_app_info.description
 
-  -elsif (@warn)
-    .error
-      %h2 Warning
-      %span.flash=@warn
-      %a#start_url{:href=> @sample_app_info.starting_url}=@sample_app_info.starting_url
 
-  %form{:action=> "/apps/#{@app_name}/deploy", :method => :post}
-
-    %a{:href=>'#', :onclick =>"$('#advanced').show();$(this).hide(); $(this).next().show()"} View Deployment Details
-    %a{:href=>'#', :style => 'display:none', :onclick =>"$('#advanced').hide();$(this).hide(); $(this).prev().show()"} Hide Deployment Details
-    %br
-    %br
-    #advanced.hidden
-      -@env_vars.each do |env_var, env_value|
-        .fieldset
-          %span{:for=>env_var}="#{env_var}:&nbsp;"
-          %input{:type=>'text', :value =>env_value, :name => env_var }
-      %hr
+%h2 Source
+%a{:href=>@sample_app_info.git_repo, :target=>'_blank'}="#{@sample_app_info.git_repo}"
+%br
+%br
+%h2 Details
+%form.form-app{:action=> "/apps/#{@app_name}/deploy", :method => :post}
+  #advanced
+    -@env_vars.each do |env_var, env_value|
       .fieldset
-        %span External Developer Email:&nbsp;
-        %input.short{:name=>'external_email', :type => 'text', :value => params[:external_email], :readonly => true}
-      .fieldset
-        %span External App Name:&nbsp;
-        %input.short{:name=>'external_app_name', :type => 'text', :value => params[:external_app_name], :readonly => true}
-      %hr
-      .fieldset
-        %label{:for => 'new_name'} Reserved Cloud Foundry App Name
-        %input.short{:name => 'new_name', :type => 'text', :value => @current_app_name}
-        %span .cloudfoundry.com
+        %label{:for=>env_var}="#{env_var}:&nbsp;"
+        %input.short{:type=>'text', :value =>env_value, :name => env_var }
+    .fieldset
+      %label External Developer Email:&nbsp;
+      %input.short{:name=>'external_email', :type => 'text', :value => params[:external_email], :readonly => true}
+    .fieldset
+      %label External App Name:&nbsp;
+      %input.short{:name=>'external_app_name', :type => 'text', :value => params[:external_app_name], :readonly => true}
+    -if @fail
+      .error-box
+        %h2 Error
+        %span.flash=@fail
+        %a#start_url{:href=> @sample_app_info.starting_url}=@sample_app_info.starting_url
+        %span OR contact support including your
+        %a{:href =>"mailto:support@cloudfoundry.com?subject=Issues deploying: #{@sample_app_info.display_name} as #{@current_app_name}"}support@cloudfoundry.com
+    - elsif (@warn)
+      .error-box
+        %h2 Warning
+        %span.flash=@warn
+        %a#start_url{:href=> @sample_app_info.starting_url}=@sample_app_info.starting_url
+    %hr
+    .fieldset
+      %label{:for => 'new_name'} Reserved Cloud Foundry App Name
+      %input.short{:name => 'new_name', :type => 'text', :value => @current_app_name}
+      %span .cloudfoundry.com
 
-    %dd
-      -if (session[:email])
-        -unless @warn
-          .buttons
-            %button{:type => 'submit', :enabled => false} Deploy
-      -else
-        %span **You must be logged in to deploy.
+  %dd
+    -if (session[:email])
+      -unless @warn
+        .buttons
+          %button{:type => 'submit', :enabled => false} Deploy
+    -else
+      .error-box
+        %h2 To Deploy
+        %span You must be logged in.

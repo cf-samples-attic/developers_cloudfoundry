@@ -180,7 +180,7 @@ get '/apps/:app_name/get_copy' do |app_name|
   end
 
   @current_app_name = @app_clone_request ? @app_clone_request.cf_app_name : ""
-  haml :new_copy
+  haml :new_copy, :layout => :new_layout
 end
 
 

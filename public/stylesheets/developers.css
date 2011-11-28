@@ -12,11 +12,16 @@
     display: block;
     margin-top: 15px;
 }
-.form-login input {
+.form-login input{
     width: 100%;
 }
 
-.form-login button[type=submit] {
+.form-app input {
+    float:right;
+}
+.form-app input.short {width:400px}
+
+.form-login button[type=submit], .form-app button[type=submit] {
 	display: inline-block;
     float:right;
     margin-top: 10px;
@@ -83,6 +88,18 @@ p.little {
     font-weight: normal;
     margin-left: 100px;
     margin-top: 0px;
+}
+
+.form-app label {
+    font-weight: bold;
+    color: #444;
+    display: inline-block;
+    margin-bottom: 20px;
+    margin-left: 10px;
+}
+
+p.hero-body.small_text, p.sub-head.small_text  {
+  font-size:12pt;
 }
 
 
