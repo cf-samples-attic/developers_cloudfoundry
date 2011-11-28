@@ -35,6 +35,29 @@ configure do
   end
 end
 
+helpers do
+  def content_for(key, &block)
+    @content ||= {}
+    @content[key] = capture_haml(&block)
+  end
+  def content(key)
+    @content && @content[key]
+  end
+
+  def authorized? app
+    @auth ||=  Rack::Auth::Basic::Request.new(request.env)
+    @auth.provided? && @auth.basic? && @auth.credentials && @auth.credentials == [app.admin_user, app.admin_pass]
+  end
+
+  def find_sample app_name
+    #temp
+    app_info = AppInfo.find_by_display_name(app_name)
+    return app_info if app_info
+    halt [404, "Could not find sample app name #{app_name}\n"]
+  end
+end
+
+
 before do
   # Example of how to only allow https
   #unless (ENV['bypass_ssl'] && request.secure?)
@@ -58,21 +81,6 @@ before do
       end
     end
   end
-end
-
-helpers do
-  def authorized? app
-    @auth ||=  Rack::Auth::Basic::Request.new(request.env)
-    @auth.provided? && @auth.basic? && @auth.credentials && @auth.credentials == [app.admin_user, app.admin_pass]
-  end
-
-  def find_sample app_name
-    #temp
-    app_info = AppInfo.find_by_display_name(app_name)
-    return app_info if app_info
-    halt [404, "Could not find sample app name #{app_name}\n"]
-  end
-
 end
 
 
@@ -100,7 +108,6 @@ get '/logout' do
   session.delete :email
   redirect session[:path]
 end
-
 
 # Called by the 3rd party server side to request url for developer
 # Will always generate a new url
