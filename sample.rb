@@ -11,6 +11,17 @@ configure do
   @@target = "api.cloudfoundry.com"
 end
 
+helpers do
+  def content_for(key, &block)
+    @content ||= {}
+    @content[key] = capture_haml(&block)
+  end
+  def content(key)
+    @content && @content[key]
+  end
+end
+
+
 before do
 
   # Example of how to only allow https
@@ -62,12 +73,13 @@ get '/logout' do
 end
 
 get '/' do
-  haml :index
+  haml :index, :layout => :new_layout
 
 end
 
 get '/content' do
-  haml :content, :layout => :simple_layout
+  @title = "Developers"
+  haml :content, :layout => :new_layout
 end
 
 
