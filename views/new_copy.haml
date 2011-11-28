@@ -14,6 +14,9 @@
       %h2 Error
       %span.flash=@fail
       %a#start_url{:href=> @sample_app_info.starting_url}=@sample_app_info.starting_url
+      %span OR contact support including your
+      %a{:href =>"mailto:support@cloudfoundry.com?subject=Issues deploying: #{@sample_app_info.display_name} as #{@current_app_name}"}support@cloudfoundry.com
+
   -elsif (@warn)
     .error
       %h2 Warning
@@ -41,7 +44,7 @@
       %hr
       .fieldset
         %label{:for => 'new_name'} Reserved Cloud Foundry App Name
-        %input.short{:name => 'new_name', :type => 'text', :value => (@app_clone_request ? @app_clone_request.cf_app_name : "")}
+        %input.short{:name => 'new_name', :type => 'text', :value => @current_app_name}
         %span .cloudfoundry.com
 
     %dd

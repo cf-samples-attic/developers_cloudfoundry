@@ -172,6 +172,7 @@ get '/apps/:app_name/get_copy' do |app_name|
     end
   end
 
+  @current_app_name = @app_clone_request ? @app_clone_request.cf_app_name : ""
   haml :new_copy
 end
 
@@ -187,7 +188,7 @@ post '/apps/:app_name/deploy' do |app_name|
     unless @app_clone_request
       @warn = "Could not find deploy request for credentials given. Please start here:"
     else
-      name_changed = !(params[:new_name] == @app_clone_request.cf_app_name)
+      name_changed = false
 
       if (@vmcclient)
         begin
@@ -202,24 +203,28 @@ post '/apps/:app_name/deploy' do |app_name|
           end
 
           app = CloudFoundry::App.new(@vmcclient, @app_info)
-          app.create unless (app.exists?)
-          app.copy_code
-          app.start
-          @app_clone_request.update_attribute :cf_username, session[:email]
-
-          # give it a little time
-          sleep 2
-
-          if (name_changed)
-            @app_clone_request.update_attribute :cf_app_name, params[:new_name]
-            return haml :name_changed
+          if (app.exists?)
+            puts "App #{params[:new_name]} already exists. Skipping deployment"
+            flash[:notice] = "Failed to deploy app #{params[:new_name]} because it already exists. Please select a new name to deploy if you need it."
           else
-            return redirect "http://#{@app_info.app_urls.first}"
-          end
+            app.create(:pick_another_name_if_taken => true)
+            app.copy_code
+            app.start
+            @app_clone_request.update_attribute :cf_username, session[:email]
 
+            # give it a little time
+            sleep 2
+
+            if (app.name_changed)
+              @app_clone_request.update_attribute :cf_app_name, app.display_name
+              return haml :name_changed
+            else
+              return redirect "http://#{@app_info.app_urls.first}"
+            end
+          end
         rescue Exception => ex
           puts "Error #{ex} pushing app"
-          flash[:notice] = "Failed to deploy app #{params[:new_name]} please check name requested or contact support@cloudfoundry.com or start at:"
+          flash[:notice] = "Failed to deploy app #{params[:new_name]} due to #{ex} please check name requested and try again."
         end
       else
         @warn = "Please Log In before deploying"

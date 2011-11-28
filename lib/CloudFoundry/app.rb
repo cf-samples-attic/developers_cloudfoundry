@@ -9,6 +9,8 @@ module CloudFoundry
     DEFAULT_CF = ".cloudfoundry.com"
     MAX_NAME_TRIES = 10
 
+    attr_accessor :name_changed, :display_name
+
     def self.is_available_app_name? name
       begin
         url = "http://#{name}#{DEFAULT_CF}"
@@ -46,22 +48,37 @@ module CloudFoundry
     end
 
     def initialize(vmc_client, meta)
+      @name_changed = false
       @vmcclient = vmc_client
       @app_meta = meta
-      @uri = "#{@app_meta.display_name}#{DEFAULT_CF}"
-
-      @manifest = {
-         "env" => @app_meta.env_array,
-         "name"=> @app_meta.display_name,
-         "staging"=>{"framework"=>@app_meta.framework, "runtime"=>@app_meta.runtime},
-         "uris"=>[@uri],
-         "instances"=>1,
-         "resources"=>{"memory"=>@app_meta.memory}
-      }
+      @base_name = @app_meta.display_name
+      build_manifest!
     end
 
-    def create()
-      @vmcclient.create_app(@manifest["name"], @manifest)
+    def create(options={})
+      begin
+        @vmcclient.create_app(@manifest["name"], @manifest)
+      rescue RuntimeError => ex
+        if (ex.message =~ /Error 701/)
+          pick_another_name_if_taken = options[:pick_another_name_if_taken] == true ? true : false
+          tries_left = options[:tries_left] || MAX_NAME_TRIES
+          #puts "uri = #{@uri} failed pick_another_name_if_taken = #{pick_another_name_if_taken} and tries_left=#{tries_left}"
+          if pick_another_name_if_taken && tries_left > 0
+            index = MAX_NAME_TRIES - tries_left + 1
+            change_name! "#{@base_name}-#{index}"
+            create(:pick_another_name_if_taken => true, :tries_left => tries_left - 1)
+          else
+            # Format is "Error #{parsed_body[:code]}: #{desc}"
+            raise "App Url: #{@uri} is already taken"
+          end
+        else
+          raise ex
+        end
+      end
+    end
+
+    def delete()
+      @vmcclient.delete_app(@manifest["name"])
     end
 
     def copy_code()
@@ -111,6 +128,7 @@ module CloudFoundry
     def read_info
       @info = @vmcclient.app_info(@app_meta.display_name)
       @app_meta.app_urls = @info[:uris]
+      @info
     end
 
     #Helper method to download zips from Github
@@ -145,6 +163,26 @@ module CloudFoundry
           FileUtils.mkdir_p(dirname) unless File.exists?(dirname)
           zentry.extract(epath) unless File.exists?(epath)
         end
+      end
+
+      def build_manifest!
+        @display_name = @app_meta.display_name
+        @uri = "#{@display_name}#{DEFAULT_CF}"
+
+        @manifest = {
+           "env" => @app_meta.env_array,
+           "name"=> @display_name,
+           "staging"=>{"framework"=>@app_meta.framework, "runtime"=>@app_meta.runtime},
+           "uris"=>[@uri],
+           "instances"=>1,
+           "resources"=>{"memory"=>@app_meta.memory}
+        }
+      end
+
+      def change_name! new_name
+        @app_meta.display_name = new_name
+        @name_changed = true
+        build_manifest!
       end
   end
 end
