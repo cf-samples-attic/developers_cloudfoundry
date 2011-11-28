@@ -756,3 +756,87 @@ p.little {
     margin-top: 0px;
 }
 
+
+label {
+  display: block;
+  margin-top: 1em;
+}
+
+/* hand cursor on clickable input elements */
+input[type=button], input[type=submit], button { cursor: pointer; }
+
+.orange-button a {
+	  background: -moz-linear-gradient(center top , #FF8D30 0%, #FF7300 100%) repeat scroll 0 0 transparent;
+      background: -webkit-gradient(linear, left top, left bottom, from(#FF8D30), to(#FF7300));
+	  border: 1px solid #883D00;
+	  border-radius: 10px 10px 10px 10px;
+	  box-shadow: 1px 1px 10px 2px #555555;
+	  color: #FFFFFF;
+	  display: block;
+	  font-size: 21px;
+	  height: 69px;
+	  line-height: 69px;
+	  position: relative;
+	  text-align: center;
+	  text-shadow: 1px 1px 1px #9A4704;
+	  width: auto;
+}
+.orange-button a span {
+	font-family: Times,serif;
+	font-style: italic;
+	font-weight: normal;
+}
+
+.orange-button a:hover {
+    background: -moz-linear-gradient(center top , #FF7300 0%, #FF8D30 100%) repeat scroll 0 0 transparent;
+    background: -webkit-gradient(linear, left top, left bottom, from(#FF7300), to(#FF8D30));
+    text-decoration: none;
+}
+
+/* Reduce the giant login fonts */
+.prominent, .buttons {margin-left: 10px; font-size: smaller;}
+
+.navy {
+  background-color: #042938;
+  color: white;
+  padding: .1em 2em;
+}
+.turquoise {
+  background: #0084BD;
+  color: white;
+  -webkit-box-shadow: 0 0 15px rgba(0,0,0,.25);
+  -moz-box-shadow:    0 0 15px rgba(0,0,0,.25);
+  padding: .1em 2em;
+}
+
+.dc-social-float .tab {
+cursor: pointer;
+height: 38px;
+margin-left: -1px;
+}
+.dc-social-float .dc-social-float-content {
+background: #fff;
+border: 1px solid #bbb;
+padding: 5px 5px 0 5px;
+text-align: center;
+}
+.dc-social-float .dc-social-float-content {
+border-radius: 5px; -webkit-border-radius: 5px;
+}
+.dcssb-btn {margin-bottom: 5px;}
+
+/* Reduce the giant login fonts */
+.prominent, .buttons {margin-left: 10px; font-size: smaller;}
+
+/* login form */
+.logged_out_left_content {float: left; width: 60%; min-height:550px}
+.logged_out_right_content{float: left; width: 29%; min-height:550px}
+
+p.little {
+    font-size: 10px;
+    color: #717074;
+    font-weight: normal;
+    margin-left: 100px;
+    margin-top: 0px;
+}
+
