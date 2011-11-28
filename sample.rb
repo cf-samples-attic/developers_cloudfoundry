@@ -183,6 +183,13 @@ get '/apps/:app_name/get_copy' do |app_name|
   haml :new_copy, :layout => :new_layout
 end
 
+get '/apps/:app_name/name_changed' do |app_name|
+  @sample_app_info = find_sample app_name
+  @app_clone_request = @sample_app_info.find_request_to_clone({request_email: params[:external_email], request_app_name: params[:external_app_name]})
+  @app_url = "http://#{@app_clone_request.cf_app_name}#{CloudFoundry::App::DEFAULT_CF}"
+  haml :name_changed, :layout => :new_layout
+end
+
 
 # Client side request submitted from get_copy
 post '/apps/:app_name/deploy' do |app_name|
@@ -195,14 +202,13 @@ post '/apps/:app_name/deploy' do |app_name|
     unless @app_clone_request
       @warn = "Could not find deploy request for credentials given. Please start here:"
     else
-      name_changed = false
 
       if (@vmcclient)
         begin
           @app_info = @sample_app_info.clone
           @app_info.app_urls = []
 
-          @app_info.display_name = params[:new_name]
+          @app_info.display_name = @app_clone_request.cf_app_name #params[:new_name]
 
           # Set all the env vars
           @app_info.env_vars.each do |var_name, val|
@@ -210,6 +216,9 @@ post '/apps/:app_name/deploy' do |app_name|
           end
 
           app = CloudFoundry::App.new(@vmcclient, @app_info)
+          if (params[:new_name] != @app_clone_request.cf_app_name)
+            app.change_name! params[:new_name]
+          end
           if (app.exists?)
             puts "App #{params[:new_name]} already exists. Skipping deployment"
             flash[:notice] = "Failed to deploy app #{params[:new_name]} because it already exists. Please select a new name to deploy if you need it."
@@ -224,7 +233,7 @@ post '/apps/:app_name/deploy' do |app_name|
 
             if (app.name_changed)
               @app_clone_request.update_attribute :cf_app_name, app.display_name
-              return haml :name_changed
+              redirect "/apps/#{app_name}/name_changed?external_email=#{params[:external_email]}&external_app_name=#{params[:external_app_name]}"
             else
               return redirect "http://#{@app_info.app_urls.first}"
             end

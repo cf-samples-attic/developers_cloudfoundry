@@ -138,6 +138,12 @@ module CloudFoundry
       end
     end
 
+    def change_name! new_name
+      @app_meta.display_name = new_name
+      @name_changed = true
+      build_manifest!
+    end
+
     private
       def get_files_to_pack(dir)
         Dir.glob("#{dir}/**/*", File::FNM_DOTMATCH).select do |f|
@@ -177,12 +183,6 @@ module CloudFoundry
            "instances"=>1,
            "resources"=>{"memory"=>@app_meta.memory}
         }
-      end
-
-      def change_name! new_name
-        @app_meta.display_name = new_name
-        @name_changed = true
-        build_manifest!
       end
   end
 end

@@ -1,6 +1,18 @@
-%h1 Success
-%span You have successfully created your app on Cloud Foundry. However, since you changed the name of your app you need to go back to
-%a{:href=>@sample_app_info.starting_url} your service provider
-%span and edit the callback uri.
-%p Once you are done you can come back to visit:
-%a{:href => "http://#{@app_clone_request.cf_app_name}#{CloudFoundry::App::DEFAULT_CF}"}= "http://#{@app_clone_request.cf_app_name}#{CloudFoundry::App::DEFAULT_CF}"
+- content_for :hero do
+  %p.hero-header Success
+
+- content_for :subhead do
+  %p.sub-head Success
+  %a.button-plain{:href => @app_url} View App
+
+%p
+  %span You have successfully created your
+  %strong #{@sample_app_info.display_name}
+  %span app on Cloud Foundry.
+
+%p
+  %span However, since you changed the name of your app you need to go back to
+  %a{:href=>@sample_app_info.starting_url} your service provider
+  %span and edit the callback uri to:
+  %a{:href => @app_url}=@app_url
+
