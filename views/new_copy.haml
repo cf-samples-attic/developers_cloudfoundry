@@ -44,11 +44,12 @@
     %br
     %h2 Application
     %br
-    %p This is the name we will try and give your application on cloudfoundry.com
+    %p Configure how users will access your application
     .fieldset
       %label{:for => 'new_name'} Domain Name
-      %input.short{:name => 'new_name', :type => 'text', :value => @current_app_name}
-
+      %span.right
+        %input.domain{:name => 'new_name', :type => 'text', :value => @current_app_name}
+        %span=".#{CloudFoundry::App::DEFAULT_CF}"
   %dd
     -if (session[:email])
       -unless @warn

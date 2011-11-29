@@ -19,6 +19,11 @@
 .form-app input {
     float:right;
 }
+
+.form-app input.domain {
+    float: none;
+    width: 260px;
+}
 .form-app input.short {width:400px}
 
 .form-login button[type=submit], .form-app button[type=submit] {
@@ -129,6 +134,10 @@ p.hero-body.small_text, p.sub-head.small_text  {
 hr.tall {
     margin-top: 20px;
     margin-bottom: 20px;
+}
+
+span.right {
+    float:right;
 }
 
 
