@@ -53,7 +53,7 @@
 }
 
 .hero-gallery {
-  background: #0084BD;
+  background: url(/images/BG_DeployApp.png) #0084BD bottom right no-repeat;
   color: white;
 }
 
