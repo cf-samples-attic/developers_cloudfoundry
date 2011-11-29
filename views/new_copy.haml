@@ -1,15 +1,13 @@
 - content_for :hero do
-  %h1 Deploy to Cloud Foundry
-  %p.small_text Cloud Foundry now gives you the ability to deploy sample open source applications in seconds.
-  %hr
-  %p.hero-header
+  %h1.deploy_title Deploy to Cloud Foundry
+  %p.small_text Cloud Foundry now gives you the ability to deploy Sample Open Source Applications in seconds.
+  %hr.tall
+  %p.hero-header=@title
+  .app_container_hero
     %img{:src => @sample_app_info.thumb_url}
-    %label{:style=>'vertical-align:top;'}=@title
-  %p.hero-body.small_text
-    =@sample_app_info.description
+    %p.hero-body.small_text=@sample_app_info.description
 - content_for :subhead do
   %p.sub-head.small_text=@sample_app_info.description
-
 
 %h2 Source
 %p This is the location where you can get the source code for this sample application and fork the project into your own if you want to make changes to the app.

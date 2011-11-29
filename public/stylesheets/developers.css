@@ -102,5 +102,34 @@ p.hero-body.small_text, p.sub-head.small_text  {
   font-size:12pt;
 }
 
+.deploy_title {
+    margin-bottom: 20px;
+}
+
+.app_container_hero {
+    display: inline;
+    float: left;
+    margin-left: 20px;
+    margin-top: 20px;
+}
+
+.app_container_hero img {
+    display: inline;
+    float: left;
+    width: 75px;
+}
+
+.app_container_hero p.small_text {
+    display:inline;
+    float:left;
+    width: 425px;
+    margin-left:20px;
+}
+
+hr.tall {
+    margin-top: 20px;
+    margin-bottom: 20px;
+}
+
 
 
