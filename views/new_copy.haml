@@ -49,7 +49,7 @@
       %label{:for => 'new_name'} Domain Name
       %span.right
         %input.domain{:name => 'new_name', :type => 'text', :value => @current_app_name}
-        %span=".#{CloudFoundry::App::DEFAULT_CF}"
+        %span=CloudFoundry::App::DEFAULT_CF
   %dd
     -if (session[:email])
       -unless @warn
