@@ -12,22 +12,25 @@
 
 
 %h2 Source
+%p This is the location where you can get the source code for this sample application and fork the project into your own if you want to make changes to the app.
 %a{:href=>@sample_app_info.git_repo, :target=>'_blank'}="#{@sample_app_info.git_repo}"
 %br
 %br
-%h2 Details
+%h2 Configuration
 %form.form-app{:action=> "/apps/#{@app_name}/deploy", :method => :post}
+  %input{:name=>'external_email', :type => 'hidden', :value => params[:external_email]}
+  %input{:name=>'external_app_name', :type => 'hidden', :value => params[:external_app_name]}
   #advanced
+    %p
+      %span The following will be set as environment variables on your Cloud Foundry application.
+      %span You can use
+      %strong vmc
+      %span to get a list of all variables and edit them.
     -@env_vars.each do |env_var, env_value|
       .fieldset
         %label{:for=>env_var}="#{env_var}:&nbsp;"
         %input.short{:type=>'text', :value =>env_value, :name => env_var }
-    .fieldset
-      %label External Developer Email:&nbsp;
-      %input.short{:name=>'external_email', :type => 'text', :value => params[:external_email], :readonly => true}
-    .fieldset
-      %label External App Name:&nbsp;
-      %input.short{:name=>'external_app_name', :type => 'text', :value => params[:external_app_name], :readonly => true}
+
     -if @fail
       .error-box
         %h2 Error
@@ -40,11 +43,13 @@
         %h2 Warning
         %span.flash=@warn
         %a#start_url{:href=> @sample_app_info.starting_url}=@sample_app_info.starting_url
-    %hr
+    %br
+    %h2 Application
+    %br
+    %p This is the name we will try and give your application on cloudfoundry.com
     .fieldset
-      %label{:for => 'new_name'} Reserved Cloud Foundry App Name
+      %label{:for => 'new_name'} Domain Name
       %input.short{:name => 'new_name', :type => 'text', :value => @current_app_name}
-      %span .cloudfoundry.com
 
   %dd
     -if (session[:email])
