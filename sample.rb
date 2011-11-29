@@ -83,6 +83,10 @@ before do
   end
 end
 
+get '/' do
+  redirect session[:path] || "http://www.cloudfoundry.com"
+end
+
 
 post '/login' do
   email = params[:email]
