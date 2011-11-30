@@ -17,12 +17,12 @@ use Rack::Flash
 configure do
   @@target = "api.cloudfoundry.com"
   CloudFoundry::Mongo.config
-  unless (AppInfo.find_by_display_name("box-rebuilt-ruby"))
+  unless (AppInfo.find_by_display_name("box-sample-ruby-app"))
     AppInfo.create!({
-      :display_name => "box-rebuilt-ruby",
+      :display_name => "box-sample-ruby-app",
       :admin_user => "seanrose",
       :admin_pass => "badbe",
-      :app_urls => ["box-rebuilt.cloudfoundry.com"],
+      :app_urls => ["box-sample-ruby-app.cloudfoundry.com"],
       :thumb_url => "/images/box-rebuilt-ruby/75.png",
       :framework => 'sinatra',
       :description => "The Box sample app has a redesigned interface for interacting with your content on Box. It demonstrates usage of the main functions of the API, including file upload/download, account tree viewing, file preview, and more.",
@@ -123,7 +123,7 @@ post '/apps/:app_name/reserve' do |app_name|
     halt [401, "Not authorized\n"]
   end
 
-  halt [401, "Missing developer's app name"] unless params[:external_app_name] # name of app on box
+  halt [401, "Missing developer's app name"] unless params[:external_app_name] # name of app on the 3rd party service
   halt [401, "Missing developer's email"] unless params[:external_email]   #email for developer
 
   generated_name =  CloudFoundry::App.find_available_app_name(params[:external_email], params[:external_app_name] )
