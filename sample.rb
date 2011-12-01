@@ -9,6 +9,8 @@ require_relative 'lib/CloudFoundry/app_info'
 require_relative 'lib/CloudFoundry/app'
 require_relative 'lib/CloudFoundry/app_clone_request'
 
+require 'newrelic_rpm'
+
 include CloudFoundry
 
 enable :sessions
