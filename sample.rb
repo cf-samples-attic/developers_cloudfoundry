@@ -17,22 +17,26 @@ use Rack::Flash
 configure do
   @@target = "api.cloudfoundry.com"
   CloudFoundry::Mongo.config
-  unless (AppInfo.find_by_display_name("box-sample-ruby-app"))
-    AppInfo.create!({
-      :display_name => "box-sample-ruby-app",
-      :admin_user => "seanrose",
-      :admin_pass => "badbe",
-      :app_urls => ["box-sample-ruby-app.cloudfoundry.com"],
-      :thumb_url => "/images/box-rebuilt-ruby/75.png",
-      :framework => 'sinatra',
-      :description => "The Box sample app has a redesigned interface for interacting with your content on Box. It demonstrates usage of the main functions of the API, including file upload/download, account tree viewing, file preview, and more.",
-      :git_repo => "https://github.com/cloudfoundry-samples/box-sample-ruby-app",
-      :git_commit => "a2d666f",
-      :git_branch => 'master',
-      :starting_url => "https://www.box.com/developers/services",
-      :env_vars => {'BOX_API_KEY' => 'enter your key here'}
-    })
-  end
+  box_app = AppInfo.new({
+    :display_name => "box-sample-ruby-app",
+    :admin_user => "seanrose",
+    :admin_pass => "badbe",
+    :app_urls => ["box-sample-ruby-app.cloudfoundry.com"],
+    :thumb_url => "/images/box-rebuilt-ruby/75.png",
+    :framework => 'sinatra',
+    :description => "The Box sample app has a redesigned interface for interacting with your content on Box. It demonstrates usage of the main functions of the API, including file upload/download, account tree viewing, file preview, and more.",
+    :git_repo => "https://github.com/cloudfoundry-samples/box-sample-ruby-app",
+    :git_commit => "a2d666f",
+    :git_branch => 'master',
+    :starting_url => "https://www.box.com/developers/services",
+    :env_vars => {'BOX_API_KEY' => 'enter your key here'}
+  })
+  qa_box_app = box_app.clone
+  qa_box_app.display_name = "#{qa_box_app.display_name}-qa"
+
+  box_app.save! unless (AppInfo.find_by_display_name(box_app.display_name))
+  qa_box_app.save! unless (AppInfo.find_by_display_name(qa_box_app.display_name))
+
 end
 
 helpers do
