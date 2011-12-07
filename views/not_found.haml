@@ -1,0 +1,8 @@
+%h1 Not Found
+-if @app_name
+  %p="Sorry could not find sample app with name #{@app_name}"
+-else
+  %p Sorry this is not a valid route.
+  %span.orange-button
+    %a{:href=>'/', :style => 'width:140px'} Go Home
+  %p &nbsp;

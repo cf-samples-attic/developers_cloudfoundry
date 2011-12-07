@@ -73,7 +73,7 @@ before do
   @title = "Gallery"
   @canonical_url = request.url
   @fb_app_id = ENV['facebook_app_id']
-  @signup_url = "http://www.cloudfoundry.com/signup"
+  @signup_url = "https://my.cloudfoundry.com/signup"
 
   if (session[:auth_token] && @vmcclient.nil? )
     @vmcclient = VMC::Client.new(@@target, session[:auth_token])
