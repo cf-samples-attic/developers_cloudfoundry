@@ -67,6 +67,18 @@ helpers do
     return app_info if app_info
     halt [404, "Could not find sample app name #{app_name}\n"]
   end
+
+  def escaped_ext_email
+    CGI::escape(params[:external_email])
+  end
+
+  def escaped_ext_app_name
+    CGI::escape(params[:external_app_name])
+  end
+
+  def debug_log msg
+    puts "[#{DateTime.now}] #{msg} for #{session[:email]} and app name #{params[:external_app_name]}"
+  end
 end
 
 
@@ -165,7 +177,7 @@ post '/apps/:app_name/get_copy' do |app_name|
       vars = "#{vars}&#{key}=#{val}"
     end
   end
-  redirect "/apps/#{app_name}/get_copy?external_email=#{params[:external_email]}#{vars}"
+  redirect "/apps/#{app_name}/get_copy?external_email=#{escaped_ext_email}#{vars}"
 end
 
 # Client side request initiated by 3rd party for developer to deploy
@@ -199,11 +211,12 @@ get '/apps/:app_name/get_copy' do |app_name|
   haml :new_copy, :layout => :new_layout
 end
 
-get '/apps/:app_name/name_changed' do |app_name|
+get '/apps/:app_name/success' do |app_name|
   @sample_app_info = find_sample app_name
   @app_clone_request = @sample_app_info.find_request_to_clone({request_email: params[:external_email], request_app_name: params[:external_app_name]})
   @app_url = "http://#{@app_clone_request.cf_app_name}#{CloudFoundry::App::DEFAULT_CF}"
-  haml :name_changed, :layout => :new_layout
+  @changed_name = true if params[:changed_name]
+  haml :success, :layout => :new_layout
 end
 
 
@@ -236,26 +249,40 @@ post '/apps/:app_name/deploy' do |app_name|
             app.change_name! params[:new_name]
           end
           if (app.exists?)
-            puts "App #{params[:new_name]} already exists. Skipping deployment"
+            debug_log "App #{params[:new_name]} already exists. Skipping deployment"
             flash[:notice] = "Failed to deploy app #{params[:new_name]} because it already exists. Please select a new name to deploy if you need it."
           else
+            debug_log "About to create App"
             app.create(:pick_another_name_if_taken => true)
+
+            debug_log "Created App -- now copying code"
             app.copy_code
+
+            debug_log "Copied Code -- now starting app"
             app.start
+
+            debug_log "App Started -- now updating owner"
             @app_clone_request.update_attribute :cf_username, session[:email]
+
+            debug_log "Owner Updated -- sleeping"
 
             # give it a little time
             sleep 2
 
+            @changed_name = false
             if (app.name_changed)
+              debug_log "Changing name of app in records"
               @app_clone_request.update_attribute :cf_app_name, app.display_name
-              redirect "/apps/#{app_name}/name_changed?external_email=#{params[:external_email]}&external_app_name=#{params[:external_app_name]}"
-            else
-              return redirect "http://#{@app_info.app_urls.first}"
+              debug_log "Done changing name"
+              @changed_name = true
             end
+            new_url = "/apps/#{app_name}/success?#{@changed_name ?"changed_name=1&" : ''}external_email=#{escaped_ext_email}&external_app_name=#{escaped_ext_app_name}"
+
+            debug_log "Redirecting to #{new_url} changed_name is #{@changed_name}"
+            redirect new_url
           end
         rescue Exception => ex
-          puts "Error #{ex} pushing app"
+          debug_log "Error #{ex} pushing app for #{session[:email]} More at: #{ex.inspect}"
           flash[:notice] = "Failed to deploy app #{params[:new_name]} due to #{ex} please check name requested and try again."
         end
       else
@@ -264,8 +291,6 @@ post '/apps/:app_name/deploy' do |app_name|
     end
     redirect session[:path]
   end
-
-
 end
 
 

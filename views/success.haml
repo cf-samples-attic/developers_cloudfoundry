@@ -1,0 +1,26 @@
+- content_for :hero do
+  %p.hero-header Success
+
+- content_for :subhead do
+  %p.sub-head Success
+  %a.button-plain{:href => @app_url} View App
+
+%p
+  %span You have successfully created your
+  %strong #{@sample_app_info.display_name}
+  %span app on Cloud Foundry.
+
+-if @changed_name
+  %p
+    %span However, since you changed the name of your app you need to go back to
+    %a{:href=>@sample_app_info.starting_url} your service provider
+    %span and edit the callback uri to:
+    %a{:href => @app_url}=@app_url
+-else
+  You will be redirected to it in 3 seconds. If this does not happen automatically. Please click View App above.
+  :javascript
+    function go_to_new_app() {
+      window.location.href = "#{@app_url}";
+    }
+    setTimeout(go_to_new_app, 3000);
+
