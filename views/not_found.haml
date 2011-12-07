@@ -1,8 +1,23 @@
-%h1 Not Found
--if @app_name
-  %p="Sorry could not find sample app with name #{@app_name}"
--else
-  %p Sorry this is not a valid route.
-  %span.orange-button
-    %a{:href=>'/', :style => 'width:140px'} Go Home
+- content_for :hero do
+  %h1.deploy_title 404 - Not Found
+  %p.small_text  xxx
+
   %p &nbsp;
+  %hr.tall
+  %p.hero-header
+    -if @app_name
+      %p
+        ="Sorry could not find sample app with name "
+        %strong=@app_name
+    -else
+      %p Sorry this is not a valid url.
+
+- content_for :subhead do
+  %p.sub-head.small_text
+    -if @app_name
+      ="Sorry could not find sample app with name "
+      %strong=@app_name
+    -else
+      Sorry this is not a valid url.
+
+We could not find the content that you were looking for.
