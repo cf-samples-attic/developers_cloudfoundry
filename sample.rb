@@ -263,11 +263,8 @@ post '/apps/:app_name/deploy' do |app_name|
 
             debug_log "App Started -- now updating owner"
             @app_clone_request.update_attribute :cf_username, session[:email]
+            debug_log "Owner Updated"
 
-            debug_log "Owner Updated -- sleeping"
-
-            # give it a little time
-            sleep 2
 
             @changed_name = false
             if (app.name_changed)
