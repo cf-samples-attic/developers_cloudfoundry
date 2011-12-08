@@ -188,7 +188,7 @@ post '/apps/:app_name/reserve' do |app_name|
   halt [401, "Missing developer's app name"] unless params[:external_app_name] # name of app on the 3rd party service
   halt [401, "Missing developer's email"] unless params[:external_email]   #email for developer
 
-  generated_name =  CloudFoundry::App.find_available_app_name(params[:external_email], params[:external_app_name] )
+  generated_name =  CloudFoundry::App.find_available_app_name(params[:external_email], params[:external_app_name], app_name )
 
   @app_clone_request = nil
   if generated_name
@@ -279,6 +279,9 @@ post '/apps/:app_name/deploy' do |app_name|
 
           app = CloudFoundry::App.new(@vmcclient, @app_info)
           if (params[:new_name] != @app_clone_request.cf_app_name)
+            unless CloudFoundry::App.is_valid_subdomain(params[:new_name])
+              raise "'#{params[:new_name]}' is not a valid subdomain name"
+            end
             app.change_name! params[:new_name]
           end
           if (app.exists?)

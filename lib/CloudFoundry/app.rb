@@ -23,12 +23,25 @@ module CloudFoundry
       return false
     end
 
-    def self.find_available_app_name external_email, external_app_name
+    def self.is_valid_subdomain name
+      ((name =~  /^[a-zA-Z][\-a-zA-Z0-9]+$/) == 0)
+    end
+
+    def self.find_available_app_name external_email, external_app_name, stem
       # http://www.ietf.org/rfc/rfc2396.txt
       # alpha    = lowalpha | upalpha
       # alphanum = alpha | digit
       # domainlabel   = alphanum | alphanum *( alphanum | "-" ) alphanum
-      generated_name =  external_app_name.downcase.gsub(/[^-\w]/, '-')
+      generated_name =  external_app_name.downcase.gsub(/[^-\w]+/, '-').gsub(/_/, '-')  #underscores are not allowed
+
+      # Cannot start with -
+      if generated_name =~ /^-/
+        generated_name = stem + generated_name
+      end
+
+      # Also weird to end with '-'
+      generated_name = generated_name[0..generated_name.length-2] if generated_name =~ /-$/
+
 
       unless CloudFoundry::App.is_available_app_name?(generated_name)
         email_parts = external_email.split '@'
@@ -51,7 +64,9 @@ module CloudFoundry
       @name_changed = false
       @vmcclient = vmc_client
       @app_meta = meta
-      @base_name = @app_meta.display_name
+      @base_name = @app_meta.display_name.gsub /-?(\d+)$/, ''
+      puts "********** Base Name is #{@base_name} for #{@app_meta.display_name}"
+      @base_index = $1  || 0
       build_manifest!
     end
 
@@ -64,7 +79,7 @@ module CloudFoundry
           tries_left = options[:tries_left] || MAX_NAME_TRIES
           #puts "uri = #{@uri} failed pick_another_name_if_taken = #{pick_another_name_if_taken} and tries_left=#{tries_left}"
           if pick_another_name_if_taken && tries_left > 0
-            index = MAX_NAME_TRIES - tries_left + 1
+            index = MAX_NAME_TRIES - tries_left + 1 + @base_index
             change_name! "#{@base_name}-#{index}"
             create(:pick_another_name_if_taken => true, :tries_left => tries_left - 1)
           else
