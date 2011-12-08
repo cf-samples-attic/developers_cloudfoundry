@@ -26,6 +26,7 @@ configure do
     :app_urls => ["box-sample-ruby-app.cloudfoundry.com"],
     :thumb_url => "/images/box-rebuilt-ruby/75.png",
     :framework => 'sinatra',
+    :runtime => "ruby19",
     :description => "The Box sample app has a redesigned interface for interacting with your content on Box. It demonstrates usage of the main functions of the API, including file upload/download, account tree viewing, file preview, and more.",
     :git_repo => "https://github.com/cloudfoundry-samples/box-sample-ruby-app",
     :git_commit => "2614474",
