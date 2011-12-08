@@ -3,6 +3,7 @@ require 'sinatra'
 require 'json'
 require 'vmc/client'
 require 'rack-flash'
+require 'haml'
 
 require_relative 'lib/CloudFoundry/mongoid'
 require_relative 'lib/CloudFoundry/app_info'
@@ -78,7 +79,22 @@ helpers do
   end
 
   def debug_log msg
-    puts "[#{DateTime.now}] #{msg} for #{session[:email]} and app name #{params[:external_app_name]}"
+    session_info = "#{session[:session_id]} - #{session[:email]}"
+    puts "[#{DateTime.now}] DEBUG #{msg} for #{session_info} and app name #{params[:external_app_name]}"
+  end
+
+  def redirect_to_main_page other_page=nil
+    main_page = session[:path]
+    if main_page
+      debug_log "Redirecting to session path #{main_page}"
+      redirect main_page
+    elsif other_page
+      debug_log "Redirecting to other page #{other_page}"
+      redirect other_page
+    else
+      debug_log "Redirecting to request.referer #{request.referer}"
+      redirect request.referer
+    end
   end
 end
 
@@ -109,7 +125,7 @@ before do
 end
 
 get '/' do
-  redirect session[:path] || "http://www.cloudfoundry.com"
+  redirect_to_main_page "http://www.cloudfoundry.com"
 end
 
 
@@ -117,25 +133,33 @@ post '/login' do
   email = params[:email]
   password = params[:password]
 
+  debug_log "In login -- got session path = #{session[:path]}"
+  alt_path = request.url.gsub(/login/, "apps/#{params[:app_name]}/get_copy")
+  debug_log "In login -- alt path = #{alt_path}"
+
   if (email && password)
     @vmcclient = VMC::Client.new(@@target)
     begin
       @vmcclient.login(email, password)
       session[:auth_token] = @vmcclient.auth_token
       session[:email] = email
+      session[:failed_attempts] = 0
     rescue Exception => ex
+      failed_attempts = session[:failed_attempts] || 0
+      session[:failed_attempts] =  failed_attempts + 1
+      debug_log "Failed logging in #{session[:failed_attempts]} times"
       flash[:error] =  "Login Failed"
     end
   else
     flash[:error] = "Fill out the form"
   end
-  redirect session[:path]
+  redirect_to_main_page alt_path
 end
 
 get '/logout' do
   session.delete :auth_token
   session.delete :email
-  redirect session[:path]
+  redirect_to_main_page
 end
 
 # Called by the 3rd party server side to request url for developer
@@ -287,7 +311,7 @@ post '/apps/:app_name/deploy' do |app_name|
         @warn = "Please Log In before deploying"
       end
     end
-    redirect session[:path]
+    redirect_to_main_page
   end
 end
 

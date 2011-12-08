@@ -2,6 +2,7 @@
   %p.hero-body Log In
   %hr
   %form{:action => "/login", :method => "post", :novalidate => ""}
+    %input{:type=>'hidden', :value => @app_name, :name => 'app_name'}
     .prominent
       -if (flash[:error])
         .error{:style => "color:red"}
