@@ -134,8 +134,6 @@ post '/login' do
   password = params[:password]
 
   debug_log "In login -- got session path = #{session[:path]}"
-  alt_path = request.url.gsub(/login/, "apps/#{params[:app_name]}/get_copy")
-  debug_log "In login -- alt path = #{alt_path}"
 
   if (email && password)
     @vmcclient = VMC::Client.new(@@target)
@@ -153,7 +151,7 @@ post '/login' do
   else
     flash[:error] = "Fill out the form"
   end
-  redirect_to_main_page alt_path
+  redirect_to_main_page
 end
 
 get '/logout' do
