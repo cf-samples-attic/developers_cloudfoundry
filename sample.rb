@@ -96,6 +96,17 @@ helpers do
       redirect request.referer
     end
   end
+
+  def get_vars_from_form
+    vars = ''
+    reserved_params = %W{app_name email password}
+    params.each do |key, val|
+      if (reserved_params.index(key).nil?)
+        vars = "#{vars}&#{key}=#{CGI::escape val}"
+      end
+    end
+    vars
+  end
 end
 
 
@@ -133,7 +144,11 @@ post '/login' do
   email = params[:email]
   password = params[:password]
 
-  debug_log "In login -- got session path = #{session[:path]}"
+  debug_log "In login -- got session path = '#{session[:path]}'"
+
+  vars = get_vars_from_form
+  alt_path = "/apps/#{params[:app_name]}/get_copy?#{vars}"
+  debug_log "In login -- alt path = #{alt_path}"
 
   if (email && password)
     @vmcclient = VMC::Client.new(@@target)
@@ -151,7 +166,7 @@ post '/login' do
   else
     flash[:error] = "Fill out the form"
   end
-  redirect_to_main_page
+  redirect_to_main_page alt_path
 end
 
 get '/logout' do
@@ -194,13 +209,8 @@ end
 
 # Support the POST end point too !
 post '/apps/:app_name/get_copy' do |app_name|
-  vars = ''
-  params.each do |key, val|
-    if (key != 'app_name' && key != 'external_email')
-      vars = "#{vars}&#{key}=#{val}"
-    end
-  end
-  redirect "/apps/#{app_name}/get_copy?external_email=#{escaped_ext_email}#{vars}"
+  vars = get_vars_from_form
+  redirect "/apps/#{app_name}/get_copy?#{vars}"
 end
 
 # Client side request initiated by 3rd party for developer to deploy

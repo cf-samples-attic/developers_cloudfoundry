@@ -3,6 +3,11 @@
   %hr
   %form{:action => "/login", :method => "post", :novalidate => ""}
     %input{:type=>'hidden', :value => @app_name, :name => 'app_name'}
+    %input{:type=>'hidden', :value => params[:external_email], :name => 'external_email'}
+    %input{:type=>'hidden', :value => params[:external_app_name], :name => 'external_app_name'}
+    -@env_vars.each do |env_var, env_value|
+      %input{:type=>'hidden', :value =>env_value, :name => env_var}
+
     .prominent
       -if (flash[:error])
         .error{:style => "color:red"}
