@@ -2,9 +2,9 @@
 	display: inline;
 	overflow-x: hidden;
 }
-.clearfix, .container {
-	display: inline-block;
-}
+/*.clearfix, .container {*/
+	/*display: inline-block;*/
+/*}*/
 * html .clearfix, * html .container, * html .container-wrap {
 	height: 1%;
 }
