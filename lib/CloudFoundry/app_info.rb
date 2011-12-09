@@ -72,6 +72,18 @@ module CloudFoundry
 
     end
 
+    def create_or_update_attributes!
+      current_app = AppInfo.find_by_display_name(self.display_name)
+      if (current_app)
+        if (current_app.git_commit != self.git_commit)
+          current_app.git_commit = self.git_commit
+          current_app.save!
+        end
+      else
+        self.save!
+      end
+  end
+
   #  def get_memory_for_framework
   #    case @framework
   #      when "sinatra"
