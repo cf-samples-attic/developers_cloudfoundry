@@ -27,26 +27,34 @@ module CloudFoundry
       ((name =~  /^[a-zA-Z][\-a-zA-Z0-9]+$/) == 0)
     end
 
-    def self.find_available_app_name external_email, external_app_name, stem
-      # http://www.ietf.org/rfc/rfc2396.txt
-      # alpha    = lowalpha | upalpha
-      # alphanum = alpha | digit
-      # domainlabel   = alphanum | alphanum *( alphanum | "-" ) alphanum
-      generated_name =  external_app_name.downcase.gsub(/[^-\w]+/, '-').gsub(/_/, '-')  #underscores are not allowed
+    # Returns a valid subdomain
+    # http://www.ietf.org/rfc/rfc2396.txt
+    # alpha    = lowalpha | upalpha
+    # alphanum = alpha | digit
+    # domainlabel   = alphanum | alphanum *( alphanum | "-" ) alphanum
+    def self.get_valid_subdomain external_app_name, stem
+      clean_name =  external_app_name.downcase.gsub(/[^-\w]+/m, '-').gsub(/_/, '-')  #underscores are not allowed
 
       # Cannot start with -
-      if generated_name =~ /^-/
-        generated_name = stem + generated_name
+      if clean_name =~ /^-/
+        clean_name = stem + clean_name
       end
 
       # Also weird to end with '-'
-      generated_name = generated_name[0..generated_name.length-2] if generated_name =~ /-$/
+      clean_name = clean_name[0..clean_name.length-2] if clean_name =~ /-$/
 
+      clean_name
+    end
+
+    def self.find_available_app_name external_email, external_app_name, stem
+
+      clean_name = get_valid_subdomain external_app_name, stem
+      generated_name = clean_name
 
       unless CloudFoundry::App.is_available_app_name?(generated_name)
         email_parts = external_email.split '@'
         # Nice name is not available so give them a generated semi safe name
-        generated_name = "#{external_app_name}-#{email_parts.first}"
+        generated_name = "#{clean_name}-#{email_parts.first}"
         counter = 0
         while (!CloudFoundry::App.is_available_app_name?(generated_name))
           counter += 1
@@ -54,7 +62,7 @@ module CloudFoundry
             generated_name = nil
             break
           end
-          generated_name = "#{external_app_name}-#{email_parts.first}-#{counter}"
+          generated_name = "#{clean_name}-#{email_parts.first}-#{counter}"
         end
       end
       generated_name
