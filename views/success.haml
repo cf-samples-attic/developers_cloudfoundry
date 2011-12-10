@@ -17,7 +17,9 @@
     %span and edit the callback uri to:
     %a{:href => @app_url}=@app_url
 -else
-  You will be redirected to it in 5 seconds. If this does not happen automatically. Please click View App above.
+  %p
+    %span You will be redirected to it in 5 seconds. If this does not happen automatically, please click this link.
+    %a{:href => @app_url}=@app_url
   :javascript
     function go_to_new_app() {
       window.location.href = "#{@app_url}";
