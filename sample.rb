@@ -30,7 +30,7 @@ configure do
     :runtime => "ruby19",
     :description => "The Box sample app has a redesigned interface for interacting with your content on Box. It demonstrates usage of the main functions of the API, including file upload/download, account tree viewing, file preview, and more.",
     :git_repo => "https://github.com/cloudfoundry-samples/box-sample-ruby-app",
-    :git_commit => "63bdd2c",
+    :git_commit => "a68ba13",
     :git_branch => 'master',
     :starting_url => "https://www.box.com/developers/services",
     :env_vars => {'BOX_API_KEY' => 'enter your key here'}
