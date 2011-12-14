@@ -1,3 +1,4 @@
+@media screen {
 /**
 * html5doctor.com Reset Stylesheet (Eric Meyer's Reset Reloaded + HTML5 baseline)
 * v1.6.1 2010-09-17 | Authors:Eric Meyer & Richard Clark
@@ -201,7 +202,7 @@ button {
 */
 body,select,input,textarea {/* #444 looks better than black:twitter.com/H_FJ/statuses/11800719859 */
 	color:#333;
-	background: #d9d9d9;
+	background: #e4e4e4;
 	font-size: 16px;/* Set your base font here,to apply evenly */
 	font-family:"Helvetica Neue",sans-serif;
 }
@@ -219,6 +220,16 @@ h1 {
 	color: #003b4f;
 	clear: both;
 }
+
+/* @-moz-document url-prefix() {
+    h1 {
+	font-size: 40px;
+	color: #003b4f;
+	clear: both;
+        margin-top:-20px;
+    }
+} */
+
 h2 {
 	font-size: 28px;
 	clear: both;
@@ -248,7 +259,6 @@ h6 {
 a,a:active,a:visited {
 	color: #0094d4;
 	text-decoration: none;
-	font-weight: bold;
 }
 a:hover {
 	text-decoration: underline;
@@ -257,6 +267,7 @@ a:hover {
 .container {
 	float: left;
 	width: 100%;
+    margin-bottom: -5px;
 }
 .site-wrap {
 	width: 960px;
@@ -286,7 +297,7 @@ a:hover {
 	width: 300px;
 }
 .span-6 {
-	width: 366px;
+	width: 395px;
 }
 .span-7 {
 	width: 432px;
@@ -614,7 +625,7 @@ h6.subhead {
 ****************************/
 .wrapper {
 	background: #e4e4e4;
-	overflow: hidden;
+	//overflow: hidden;
 }
 #header {
 	border-top: 4px solid #717074;
@@ -622,6 +633,7 @@ h6.subhead {
 }
 .logo-wrap {
 	padding-top: 19px;
+    margin-left: -30px;
 }
 .super-nav {
 	float: right;
@@ -665,7 +677,7 @@ h6.subhead {
 	border: 1px solid #d7d7d7;
 	float: right;
 	width: auto;
-	margin: 20px 0 0;
+	margin: 11px 0 0;
 	-webkit-border-radius: 4px;
 	-moz-border-radius: 4px;
 	border-radius: 4px;
@@ -704,6 +716,7 @@ h6.subhead {
 #nav ul li a {
 	font-size: 14px;
 	color: #0094d4;
+	font-weight: bold;
 }
 #nav ul li a:hover,
 #nav ul li.selected a {
@@ -736,7 +749,7 @@ ol, {
 	margin: 10px 0 30px 0;
 }
 li {
-	background: url('/images/bullet.png') 0 7px no-repeat;
+	list-style-type: disc;
 	font-size: 16px;
 	padding-left: 12px;
 	margin-bottom: 15px;
@@ -803,6 +816,8 @@ p.normal a {
 #footer {
 	padding-top: 23px;
 	border-top: 1px solid #bcbcbc;
+    padding-bottom: 20px;
+    background-color: #d9d9d9;
 }
 #footer h2,
 #footer h2 a {
@@ -872,20 +887,20 @@ p.orange-button {
 	display: inline-block;
 	padding: 18px 20px;
 	color: #fff;
-	font-size: 20px;
+	font-size: 24px;
 	text-align: center;
 	border: 1px solid #813516;
 	-webkit-border-radius: 6px;
 	-moz-border-radius: 6px;
 	border-radius: 6px;
 	background: #ec6129;
-	background: -moz-linear-gradient(top,  #ec6129 0%, #d66035 100%);
-	background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#ec6129), color-stop(100%,#d66035));
-	background: -webkit-linear-gradient(top,  #ec6129 0%,#d66035 100%);
-	background: -o-linear-gradient(top,  #ec6129 0%,#d66035 100%);
-	background: -ms-linear-gradient(top,  #ec6129 0%,#d66035 100%);
-	background: linear-gradient(top,  #ec6129 0%,#d66035 100%);
-	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ec6129', endColorstr='#d66035',GradientType=0 );
+	background: -moz-linear-gradient(top,  #ec6129 0%, #C14513 100%);
+	background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#ec6129), color-stop(100%,#C14513));
+	background: -webkit-linear-gradient(top,  #ec6129 0%,#C14513 100%);
+	background: -o-linear-gradient(top,  #ec6129 0%,#C14513 100%);
+	background: -ms-linear-gradient(top,  #ec6129 0%,#C14513 100%);
+	background: linear-gradient(top,  #ec6129 0%,#C14513 100%);
+	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ec6129', endColorstr='#C14513',GradientType=0 );
 	-webkit-box-shadow: inset 0 1px 0 0 rgba(255,255,255, .3), inset 0 -1px 0 0 rgba(0,0,0, .4);
 	-moz-box-shadow: inset 0 1px 0 0 rgba(255,255,255, .3), inset 0 -1px 0 0 rgba(0,0,0, .4);
 	box-shadow: inset 0 1px 0 0 rgba(255,255,255, .3), inset 0 -1px 0 0 rgba(0,0,0, .4);
@@ -1113,6 +1128,10 @@ p.orange-button {
 .secondary {
 	background: #efefef;
 }
+.calendar {
+	padding:10px;
+	padding-top:7px;
+}
 .secondary h3 {
 	color: #333;
 	font-weight: bold;
@@ -1217,7 +1236,7 @@ p.callout-item a {
 	z-index: 100;
 	background: #333;
 	font-size: 24px;
-	color: #b8b8b8;
+	color: #0094D4;
 	border: 1px solid #d5d5d5;
 	text-shadow: 0 1px 0 #FFF;
 	padding: 5px 8px;
@@ -1419,7 +1438,7 @@ table.alt td {
 	height: 494px;
 }
 .hero-left .hero-content {
-	padding: 59px 35px 0 30px;
+	padding: 44px 35px 0 30px;
 }
 .hero-right {
 	width: 640px;
@@ -1432,16 +1451,23 @@ table.alt td {
 .hero-right .hero-content {
 	padding: 59px 35px 0 30px;
 }
+.hero-right .hero-button {
+	padding: 50px 0 0 9px;
+}
 .hero-left .hero-body {
-	font-size: 30px;
+	font-size: 36px;
 }
 .hero-header {
-	font-size: 24px;
-	margin: 0;
+	font-size: 34px;
+	margin: -12px 0 0 9px;
 	font-weight: bold;
+    color: #023753;
 }
 .hero-right .hero-body {
-	font-size: 24px;
+	font-size: 16px;
+    margin-left: 10px;
+    margin-top: 5px;
+    margin-bottom: -38px;
 }
 .hero {
 	height: 494px;
@@ -1457,7 +1483,7 @@ table.alt td {
 }
 .mystery-nav {
 	position: absolute;
-	left: 555px;
+	left: 575px;
 	top: 25px;
 }
 .mystery-nav li {
@@ -1736,6 +1762,12 @@ a:active.button-plain {
 }
 /*
 *************** Misc ********************/
+
+#feed {
+  height: 430px;
+}
+
+
 hr.alt {
 	background: #ccc;
 	color: #ddd;
@@ -1914,7 +1946,7 @@ img.right {
 }
 .icon-comment {
 	display: block;
-	background: url('/images/icon_speech_bubble.png') no-repeat scroll top left;
+	/* background: url('/images/icon_speech_bubble.png') no-repeat scroll top left; */
 	width: 33px;
 	height: 22px;
 	font-size: 11px;
@@ -2481,4 +2513,23 @@ while regular CSS background images are relative to the CSS document.
 .cboxIE #cboxMiddleRight {
 	background: transparent;
 	filter: progid:DXImageTransform.Microsoft.AlphaImageLoader(src=/images/colorbox/internet_explorer/borderMiddleRight.png,sizingMethod='scale');
+}
+
+td.gsc-branding-img, td.gcsc-branding-img {
+    display:none;
+}
+
+td.gsc-branding-text, td.gcsc-branding-text {
+    display:none;
+}
+#heading .tabs .copy1 {
+  /* position: absolute; */
+  background-image: url('/images/CF_HP_Panel01.png');
+  height:494px;
+}
+#heading .tabs .copy2 {
+  /* position: absolute; */
+  background-image: url('/images/CF_HP_Panel03.png');
+  height:494px;
+}
 }
