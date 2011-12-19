@@ -39,7 +39,7 @@
         .site-wrap
           .container
             .span-6.logo-wrap
-              %a{:href => "http://www.cloudfoundry.com"}
+              %a{:href => @www_url}
                 %img{:alt => "Cloud Foundry: The Industry's First Open Platform As A Service", :height => "70", :src => "/images/logo_header_cloudfoundry.png", :width => "373"}
                   %span.replaced Cloud Foundry: The Industry's First Open Platform As A Service
             .span-9.last
@@ -82,17 +82,15 @@
             %a.youtube.replaced{:href => "http://www.youtube.com/cloudfoundry", :rel => "external", :target => "_blank"} YouTube
           .prepend-2.span-5
             %p
-              %a{:href => "http://www.cloudfoundry.com/faq.html"} FAQ
+              %a{:href => "#{@www_url}/faq.html"} FAQ
               |
               %a{:href => "http://support.cloudfoundry.com", :rel => "external"} Forums
               |
               %a{:href => "http://blog.cloudfoundry.com", :rel => "external"} Blog
               |
-              %a{:href => "http://www.cloudfoundry.com/jobs.html"} Jobs
+              %a{:href => "#{@www_url}/jobs.html"} Jobs
               |
-              %a{:href => "http://www.cloudfoundry.com/terms.html"} Terms
-              |
-              %a{:href => "http://www.cloudfoundry.com/legal.html"} Legal
+              %a{:href => "#{@www_url}/legal.html"} Legal
               |
               %a{:href => "http://www.vmware.com/help/privacy.html", :rel => "external", :target => "_blank"} Privacy
           .span-5.last.right

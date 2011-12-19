@@ -11,9 +11,9 @@ module CloudFoundry
 
     attr_accessor :name_changed, :display_name
 
-    def self.is_available_app_name? name
+    def self.is_available_app_name? name, cloud=DEFAULT_CF
       begin
-        url = "http://#{name}#{DEFAULT_CF}"
+        url = "http://#{name}#{cloud}"
         puts "Checking #{url} if available"
         response = RestClient.get url
       rescue Exception => ex
@@ -46,17 +46,17 @@ module CloudFoundry
       clean_name
     end
 
-    def self.find_available_app_name external_email, external_app_name, stem
+    def self.find_available_app_name external_email, external_app_name, stem, cloud=DEFAULT_CF
 
       clean_name = get_valid_subdomain external_app_name, stem
       generated_name = clean_name
 
-      unless CloudFoundry::App.is_available_app_name?(generated_name)
+      unless CloudFoundry::App.is_available_app_name?(generated_name, cloud)
         email_parts = external_email.split '@'
         # Nice name is not available so give them a generated semi safe name
         generated_name = "#{clean_name}-#{email_parts.first}"
         counter = 0
-        while (!CloudFoundry::App.is_available_app_name?(generated_name))
+        while (!CloudFoundry::App.is_available_app_name?(generated_name, cloud))
           counter += 1
           if (counter > MAX_NAME_TRIES)
             generated_name = nil

@@ -14,7 +14,7 @@
         .error{:style => "color:red"}
           %span.flash=flash[:error]
           - flash[:error] = nil
-          %a{:href=>"https://my.cloudfoundry.com/passwd", :rel => "external"}Forgot password?
+          %a{:href=>"#{@my_url}/passwd", :rel => "external"}Forgot password?
       %label{:for => "username"} Email
       %input#username{:autofocus => "autofocus", :name => "email", :type => "email", :value => params[:email]}
         %label{:for => "password"} Password

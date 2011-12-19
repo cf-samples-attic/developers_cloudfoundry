@@ -18,7 +18,6 @@ enable :sessions
 use Rack::Flash
 
 configure do
-  @@target = "api.cloudfoundry.com"
   CloudFoundry::Mongo.config
   box_app = AppInfo.new({
     :display_name => "box-sample-ruby-app",
@@ -118,10 +117,16 @@ before do
   @title = "Gallery"
   @canonical_url = request.url
   @fb_app_id = ENV['facebook_app_id']
-  @signup_url = "https://my.cloudfoundry.com/signup"
+  @cloud = ENV['cloud'] || '.cloudfoundry.com'
+
+  @target = "api#{@cloud}"
+  @www_url = "http://www#{@cloud}"
+  @my_url = "https://my#{@cloud}"
+  @signup_url = "#{@my_url}/signup"
+  @passwd_url = "#{@my_url}/passwd"
 
   if (session[:auth_token] && @vmcclient.nil? )
-    @vmcclient = VMC::Client.new(@@target, session[:auth_token])
+    @vmcclient = VMC::Client.new(@target, session[:auth_token])
     unless session[:email]
       begin
         if (info = @vmcclient.info)
@@ -135,7 +140,7 @@ before do
 end
 
 get '/' do
-  redirect_to_main_page "http://www.cloudfoundry.com"
+  redirect_to_main_page @www_url
 end
 
 
@@ -150,7 +155,7 @@ post '/login' do
   debug_log "In login -- alt path = #{alt_path}"
 
   if (email && password)
-    @vmcclient = VMC::Client.new(@@target)
+    @vmcclient = VMC::Client.new(@target)
     begin
       @vmcclient.login(email, password)
       session[:auth_token] = @vmcclient.auth_token
@@ -187,7 +192,7 @@ post '/apps/:app_name/reserve' do |app_name|
   halt [401, "Missing developer's app name"] unless params[:external_app_name] # name of app on the 3rd party service
   halt [401, "Missing developer's email"] unless params[:external_email]   #email for developer
 
-  generated_name =  CloudFoundry::App.find_available_app_name(params[:external_email], params[:external_app_name], app_name )
+  generated_name =  CloudFoundry::App.find_available_app_name(params[:external_email], params[:external_app_name], app_name, @cloud )
 
   @app_clone_request = nil
   if generated_name
@@ -203,7 +208,7 @@ post '/apps/:app_name/reserve' do |app_name|
     halt [401, "Could not find or create app deploy request for developer email= #{params[:external_email]} with app name = #{params[:external_app_name]}"]
   end
 
-  return "http://#{@app_clone_request.cf_app_name}#{CloudFoundry::App::DEFAULT_CF}"
+  return "http://#{@app_clone_request.cf_app_name}#{@cloud}"
 end
 
 # Support the POST end point too !
@@ -246,7 +251,7 @@ end
 get '/apps/:app_name/success' do |app_name|
   @sample_app_info = find_sample app_name
   @app_clone_request = @sample_app_info.find_request_to_clone({request_email: params[:external_email], request_app_name: params[:external_app_name]})
-  @app_url = "http://#{@app_clone_request.cf_app_name}#{CloudFoundry::App::DEFAULT_CF}"
+  @app_url = "http://#{@app_clone_request.cf_app_name}#{@cloud}"
   @changed_name = true if params[:changed_name]
   haml :success, :layout => :new_layout
 end
