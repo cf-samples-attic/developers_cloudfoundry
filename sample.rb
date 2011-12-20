@@ -281,7 +281,7 @@ post '/apps/:app_name/deploy' do |app_name|
             @app_info.env_vars[var_name] = params[var_name]
           end
 
-          app = CloudFoundry::App.new(@vmcclient, @app_info)
+          app = CloudFoundry::App.new(@vmcclient, @app_info, @cloud)
           if (params[:new_name] != @app_clone_request.cf_app_name)
             unless CloudFoundry::App.is_valid_subdomain(params[:new_name])
               raise "'#{params[:new_name]}' is not a valid subdomain name"

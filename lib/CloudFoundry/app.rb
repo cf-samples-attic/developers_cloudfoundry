@@ -68,7 +68,8 @@ module CloudFoundry
       generated_name
     end
 
-    def initialize(vmc_client, meta)
+    def initialize(vmc_client, meta, cloud=DEFAULT_CF)
+      @cloud = cloud
       @name_changed = false
       @vmcclient = vmc_client
       @app_meta = meta
@@ -196,7 +197,7 @@ module CloudFoundry
 
       def build_manifest!
         @display_name = @app_meta.display_name
-        @uri = "#{@display_name}#{DEFAULT_CF}"
+        @uri = "#{@display_name}#{@cloud}"
 
         @manifest = {
            "env" => @app_meta.env_array,
