@@ -1,0 +1,67 @@
+GEM
+  remote: http://rubygems.org/
+  specs:
+    activemodel (3.1.3)
+      activesupport (= 3.1.3)
+      builder (~> 3.0.0)
+      i18n (~> 0.6)
+    activesupport (3.1.3)
+      multi_json (~> 1.0)
+    addressable (2.2.6)
+    bson (1.5.2)
+    bson_ext (1.5.2)
+      bson (= 1.5.2)
+    builder (3.0.0)
+    haml (3.1.4)
+    i18n (0.6.0)
+    interact (0.3)
+    json (1.6.4)
+    json_pure (1.5.4)
+      spruz (~> 0.2.8)
+    mime-types (1.17.2)
+    mongo (1.5.2)
+      bson (= 1.5.2)
+    mongoid (2.2.5)
+      activemodel (~> 3.0)
+      mongo (~> 1.3)
+      tzinfo (~> 0.3.22)
+    multi_json (1.0.4)
+    newrelic_rpm (3.3.1)
+    rack (1.4.0)
+    rack-flash (0.1.2)
+      rack
+    rack-protection (1.2.0)
+      rack
+    rest-client (1.6.7)
+      mime-types (>= 1.16)
+    rubyzip2 (2.0.2)
+    sinatra (1.3.2)
+      rack (~> 1.3, >= 1.3.6)
+      rack-protection (~> 1.2)
+      tilt (~> 1.3, >= 1.3.3)
+    spruz (0.2.13)
+    terminal-table (1.4.4)
+    tilt (1.3.3)
+    tzinfo (0.3.31)
+    vmc (0.3.15)
+      addressable (~> 2.2.6)
+      interact (~> 0.3.0)
+      json_pure (~> 1.5.1)
+      rest-client (>= 1.6.1, < 1.7.0)
+      rubyzip2 (~> 2.0.1)
+      terminal-table (~> 1.4.2)
+    zip (2.0.2)
+
+PLATFORMS
+  ruby
+
+DEPENDENCIES
+  bson_ext (~> 1.4)
+  haml
+  json
+  mongoid (~> 2.2.4)
+  newrelic_rpm
+  rack-flash (= 0.1.2)
+  sinatra
+  vmc
+  zip (~> 2.0.2)
