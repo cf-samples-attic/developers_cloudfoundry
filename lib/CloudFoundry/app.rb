@@ -111,24 +111,28 @@ module CloudFoundry
       unless (Dir.exists? extracted_dir)
         puts "Downloading to directory #{extracted_dir}"
         tmp_file = "#{Dir.tmpdir}raw-#{@app_meta.display_name}.zip"
-        zip_url = "#{@app_meta.git_repo}/zipball/#{@app_meta.git_branch}"
+        zip_url = "#{@app_meta.git_repo}/zipball/#{@app_meta.git_tag_or_branch}"
         get(tmp_file, zip_url)
         #extracts to extracted_dir
-        unpack(tmp_file, Dir.tmpdir)
-        extracted_dir
+        actual_dir = unpack(tmp_file, Dir.tmpdir)
+
+        if actual_dir != extracted_dir
+          raise "Error expected #{extracted_dir}, but got #{actual_dir}"
+        end
       else
         puts "Great news the source repo directory #{extracted_dir} already exists"
       end
 
-      unless get_files_to_pack(extracted_dir).empty?
-        zipfile = "#{Dir.tmpdir}/#{@app_meta.display_name}.zip"
-        if  File::exists?("#{zipfile}")
-          puts "We already have the packed zip #{zipfile}"
-        else
-          pack(extracted_dir, zipfile)
-        end
-        @vmcclient.upload_app(@app_meta.display_name, zipfile)
+      if get_files_to_pack(extracted_dir).empty?
+        raise "#{extracted_dir} is empty - We cannot deploy an app with no source code"
       end
+      zipfile = "#{Dir.tmpdir}/#{@app_meta.display_name}-#{@app_meta.git_tag_or_branch}.zip"
+      if  File::exists?("#{zipfile}")
+        puts "We already have the packed zip #{zipfile}"
+      else
+        pack(extracted_dir, zipfile)
+      end
+      @vmcclient.upload_app(@app_meta.display_name, zipfile)
     end
 
     def exists?
@@ -187,12 +191,16 @@ module CloudFoundry
       end
 
       def unpack(file, dest)
+        actual_dir = nil
         Zip::ZipFile.foreach(file) do |zentry|
           epath = "#{dest}/#{zentry}"
+          # The first item is the directory so get its name
+          actual_dir = zentry unless actual_dir
           dirname = File.dirname(epath)
           FileUtils.mkdir_p(dirname) unless File.exists?(dirname)
           zentry.extract(epath) unless File.exists?(epath)
         end
+        actual_dir
       end
 
       def build_manifest!

@@ -22,6 +22,7 @@ module CloudFoundry
 
     field :git_repo, :type => String
     field :git_branch, :type => String
+    field :git_tag, :type => String
     field :git_commit, :type => String
 
     field :browseable, :type => Boolean
@@ -41,7 +42,7 @@ module CloudFoundry
 
     def env_array
       # So developers know where to get the code from
-      array = ["SOURCE_GIT_REPO=#{git_repo}", "SOURCE_GIT_COMMIT=#{git_commit}", "SOURCE_GIT_BRANCH=#{git_branch}"]
+      array = ["SOURCE_GIT_REPO=#{git_repo}", "SOURCE_GIT_TAG=#{git_tag}","SOURCE_GIT_COMMIT=#{git_commit}", "SOURCE_GIT_BRANCH=#{git_branch}"]
       env_vars.each do |key,val|
         array << "#{key}=#{val}"
       end
@@ -51,6 +52,10 @@ module CloudFoundry
 
     def promocode
       display_name.gsub /[\s\-\_]/, ''
+    end
+
+    def git_tag_or_branch
+      git_tag || git_branch
     end
 
     def self.find_by_display_name display_name
