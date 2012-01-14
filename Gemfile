@@ -1,7 +1,7 @@
 source 'http://rubygems.org'
 
 gem 'sinatra'
-gem 'rack-flash'
+gem 'rack-flash', '0.1.3'
 gem 'json'
 gem 'haml'
 gem 'vmc'
