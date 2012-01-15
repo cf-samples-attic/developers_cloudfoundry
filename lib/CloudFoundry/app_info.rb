@@ -7,42 +7,35 @@ module CloudFoundry
     #has_many :app_health_snapshots
     #belongs_to :ogp_description
     embeds_many :app_clone_requests
+    embeds_one :repo, :class_name => "GitHub::RepositorySnapshot"
 
     field :app_id, :type => Integer
     field :app_urls, :type => Array
-    field :thumb_url, :type => String
-    field :admin_user, :type => String
-    field :admin_pass, :type => String
     field :display_name, :type => String
     field :description, :type => String
     field :instances, :type => Integer, :default => 1
     field :memory, :type => Integer, :default => 128
     field :runtime, :type => String
     field :framework, :type => String
-
-    field :git_repo, :type => String
-    field :git_branch, :type => String
-    field :git_tag, :type => String
-    field :git_commit, :type => String
-
-    field :browseable, :type => Boolean
-    field :cloneable, :type => Boolean
-
     field :env_vars, :type => Hash
 
+    field :thumb_url, :type => String
+    field :admin_user, :type => String
+    field :admin_pass, :type => String
+    field :browseable, :type => Boolean
+    field :cloneable, :type => Boolean
     field :starting_url, :type => String
 
 
     index :app_id, :unique => true
     index :display_name, :unique => true
 
-    def repo_name
-      git_repo.gsub(/https\:\/\/github.com\//, '').gsub(/\//, "-")
-    end
+    validates_presence_of :display_name, :runtime, :framework, :app_id
+    validates_presence_of :repo, :if => :cloneable
 
     def env_array
       # So developers know where to get the code from
-      array = ["SOURCE_GIT_REPO=#{git_repo}", "SOURCE_GIT_TAG=#{git_tag}","SOURCE_GIT_COMMIT=#{git_commit}", "SOURCE_GIT_BRANCH=#{git_branch}"]
+      array = repo.to_env_array
       env_vars.each do |key,val|
         array << "#{key}=#{val}"
       end
@@ -52,10 +45,6 @@ module CloudFoundry
 
     def promocode
       display_name.gsub /[\s\-\_]/, ''
-    end
-
-    def git_tag_or_branch
-      git_tag || git_branch
     end
 
     def self.find_by_display_name display_name
@@ -80,8 +69,8 @@ module CloudFoundry
     def create_or_update_attributes!
       current_app = AppInfo.find_by_display_name(self.display_name)
       if (current_app)
-        if (current_app.git_commit != self.git_commit)
-          current_app.git_commit = self.git_commit
+        if (current_app.repo != self.repo)
+          current_app.repo = self.repo
           current_app.save!
         end
       else

@@ -106,13 +106,12 @@ module CloudFoundry
     end
 
     def copy_code()
-      extracted_dir = "#{Dir.tmpdir}/#{@app_meta.repo_name}-#{@app_meta.git_commit}"
+      extracted_dir = "#{Dir.tmpdir}/#{@app_meta.repo.name}-#{@app_meta.repo.commit}"
 
       unless (Dir.exists? extracted_dir)
         puts "Downloading to directory #{extracted_dir}"
         tmp_file = "#{Dir.tmpdir}raw-#{@app_meta.display_name}.zip"
-        zip_url = "#{@app_meta.git_repo}/zipball/#{@app_meta.git_tag_or_branch}"
-        get(tmp_file, zip_url)
+        get(tmp_file, @app_meta.zip_url)
         #extracts to extracted_dir
         actual_dir = unpack(tmp_file, Dir.tmpdir)
 
@@ -126,7 +125,7 @@ module CloudFoundry
       if get_files_to_pack(extracted_dir).empty?
         raise "#{extracted_dir} is empty - We cannot deploy an app with no source code"
       end
-      zipfile = "#{Dir.tmpdir}/#{@app_meta.display_name}-#{@app_meta.git_tag_or_branch}.zip"
+      zipfile = "#{Dir.tmpdir}/#{@app_meta.display_name}-#{@app_meta.repo.tag_or_branch}.zip"
       if  File::exists?("#{zipfile}")
         puts "We already have the packed zip #{zipfile}"
       else

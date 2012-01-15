@@ -12,6 +12,7 @@ GEM
     bson_ext (1.5.2)
       bson (= 1.5.2)
     builder (3.0.0)
+    diff-lcs (1.1.3)
     haml (3.1.4)
     i18n (0.6.0)
     interact (0.3)
@@ -32,8 +33,18 @@ GEM
       rack
     rack-protection (1.2.0)
       rack
+    rack-test (0.6.1)
+      rack (>= 1.0)
     rest-client (1.6.7)
       mime-types (>= 1.16)
+    rspec (2.8.0)
+      rspec-core (~> 2.8.0)
+      rspec-expectations (~> 2.8.0)
+      rspec-mocks (~> 2.8.0)
+    rspec-core (2.8.0)
+    rspec-expectations (2.8.0)
+      diff-lcs (~> 1.1.2)
+    rspec-mocks (2.8.0)
     rubyzip2 (2.0.2)
     sinatra (1.3.1)
       rack (~> 1.3, >= 1.3.4)
@@ -62,6 +73,8 @@ DEPENDENCIES
   mongoid (~> 2.2.4)
   newrelic_rpm
   rack-flash (= 0.1.3)
+  rack-test
+  rspec
   sinatra
   vmc
   zip (~> 2.0.2)
