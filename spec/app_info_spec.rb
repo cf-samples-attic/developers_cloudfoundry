@@ -11,11 +11,10 @@ describe "AppInfo" do
     obj.app_clone_requests.should == []
   end
 
-  it "Should require AppID, Display Name, Runtime and Framework to save" do
+  it "Should require Display Name, Runtime and Framework to save" do
     obj = CloudFoundry::AppInfo.new
     obj.should_not be_valid
 
-    obj.app_id = 10
     obj.display_name = "Spaceship"
     obj.runtime = "ruby19"
     obj.framework = "sinatra"

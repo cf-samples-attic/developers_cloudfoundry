@@ -1,22 +1,32 @@
 module GitHub
   class RepositorySnapshot
     include Mongoid::Document
-    has_many :app_infos
 
     field :url, :type => String
     field :name, :type => String
+    field :parent, :type => String
     field :branch, :type => String, :default => 'master'
     field :tag, :type => String
     field :commit, :type => String
 
     index :url, :unique => true
 
-    validates_presence_of :url, :name, :commit, :branch
+    validates_presence_of :url, :name, :parent, :commit, :branch
 
     def url=(value)
-      name = value.gsub(/https\:\/\/github.com\//, '').gsub(/\//, "-")
-      write_attribute(:name, name)
+      parts = value.gsub(/https\:\/\/github.com\//, '').split('/')
+      if (parts.length == 2)
+        write_attribute(:parent, parts[0])
+        write_attribute(:name, parts[1])
+      else
+        write_attribute(:parent, nil)
+        write_attribute(:name, nil)
+      end
       write_attribute(:url, value)
+    end
+
+    def local_name
+      "#{parent}-#{name}"
     end
 
     def tag_or_branch

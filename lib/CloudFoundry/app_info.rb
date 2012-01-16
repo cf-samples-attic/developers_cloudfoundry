@@ -1,11 +1,7 @@
 module CloudFoundry
   class AppInfo
     include Mongoid::Document
-    #include Mongoid::Timestamps
-    #
-    #has_and_belongs_to_many :service_infos
-    #has_many :app_health_snapshots
-    #belongs_to :ogp_description
+
     embeds_many :app_clone_requests
     belongs_to :repo, :class_name => "GitHub::RepositorySnapshot"
 
@@ -75,23 +71,5 @@ module CloudFoundry
         self.save!
       end
   end
-
-  #  def get_memory_for_framework
-  #    case @framework
-  #      when "sinatra"
-  #        return 128
-  #      when "rails3"
-  #        return 256
-  #      when "spring"
-  #      when "java_web"
-  #      when "lift"
-  #      when "grails"
-  #        return 512
-  #      when "node"
-  #        return 64
-  #      else
-  #        return 256
-  #      end
-  #    end
   end
 end

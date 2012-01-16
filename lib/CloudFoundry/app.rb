@@ -86,7 +86,6 @@ module CloudFoundry
         if (ex.message =~ /Error 701/)
           pick_another_name_if_taken = options[:pick_another_name_if_taken] == true ? true : false
           tries_left = options[:tries_left] || MAX_NAME_TRIES
-          #puts "uri = #{@uri} failed pick_another_name_if_taken = #{pick_another_name_if_taken} and tries_left=#{tries_left}"
           if pick_another_name_if_taken && tries_left > 0
             index = MAX_NAME_TRIES - tries_left + 1 + @base_index
             change_name! "#{@base_name}-#{index}"
