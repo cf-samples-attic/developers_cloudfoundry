@@ -9,17 +9,26 @@ require_relative 'lib/CloudFoundry/mongoid'
 require_relative 'lib/CloudFoundry/app_info'
 require_relative 'lib/CloudFoundry/app'
 require_relative 'lib/CloudFoundry/app_clone_request'
+require_relative 'lib/GitHub/repository_snapshot'
 
 require 'newrelic_rpm'
 
 include CloudFoundry
+include GitHub
 
 enable :sessions
 use Rack::Flash
 
 configure do
   CloudFoundry::Mongo.config
+  repo =  RepositorySnapshot.find_or_create_by({
+    :url => "https://github.com/cloudfoundry-samples/box-sample-ruby-app",
+    :commit => "e84963c",
+    :tag => 'v1.0'
+  })
+
   box_app = AppInfo.new({
+    :repo => repo,
     :display_name => "box-sample-ruby-app",
     :admin_user => "seanrose",
     :admin_pass => "badbe",
@@ -28,10 +37,6 @@ configure do
     :framework => 'sinatra',
     :runtime => "ruby19",
     :description => "The Box sample app has a redesigned interface for interacting with your content on Box. It demonstrates usage of the main functions of the API, including file upload/download, account tree viewing, file preview, and more.",
-    :git_repo => "https://github.com/cloudfoundry-samples/box-sample-ruby-app",
-    :git_commit => "e84963c",
-    :git_branch => 'master',
-    :git_tag => 'v1.0',
     :starting_url => "https://www.box.com/developers/services",
     :env_vars => {'BOX_API_KEY' => 'enter your key here'}
   })

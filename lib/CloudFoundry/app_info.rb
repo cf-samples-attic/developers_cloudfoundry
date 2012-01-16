@@ -7,7 +7,7 @@ module CloudFoundry
     #has_many :app_health_snapshots
     #belongs_to :ogp_description
     embeds_many :app_clone_requests
-    embeds_one :repo, :class_name => "GitHub::RepositorySnapshot"
+    belongs_to :repo, :class_name => "GitHub::RepositorySnapshot"
 
     field :app_id, :type => Integer
     field :app_urls, :type => Array
@@ -26,11 +26,9 @@ module CloudFoundry
     field :cloneable, :type => Boolean
     field :starting_url, :type => String
 
-
-    index :app_id, :unique => true
     index :display_name, :unique => true
 
-    validates_presence_of :display_name, :runtime, :framework, :app_id
+    validates_presence_of :display_name, :runtime, :framework
     validates_presence_of :repo, :if => :cloneable
 
     def env_array

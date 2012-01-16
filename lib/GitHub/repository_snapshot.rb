@@ -1,13 +1,15 @@
 module GitHub
   class RepositorySnapshot
     include Mongoid::Document
-    embedded_in :app_info
+    has_many :app_infos
 
     field :url, :type => String
     field :name, :type => String
     field :branch, :type => String, :default => 'master'
     field :tag, :type => String
     field :commit, :type => String
+
+    index :url, :unique => true
 
     validates_presence_of :url, :name, :commit, :branch
 
