@@ -9,6 +9,7 @@ require_relative 'lib/tmp_zip'
 require_relative 'lib/CloudFoundry/mongoid'
 require_relative 'lib/CloudFoundry/app_info'
 require_relative 'lib/CloudFoundry/app'
+require_relative 'lib/CloudFoundry/app_name_generator'
 require_relative 'lib/CloudFoundry/app_clone_request'
 require_relative 'lib/GitHub/repository_snapshot'
 
@@ -199,7 +200,8 @@ post '/apps/:app_name/reserve' do |app_name|
   halt [401, "Missing developer's app name"] unless params[:external_app_name] # name of app on the 3rd party service
   halt [401, "Missing developer's email"] unless params[:external_email]   #email for developer
 
-  generated_name =  CloudFoundry::App.find_available_app_name(params[:external_email], params[:external_app_name], app_name, @cloud )
+  generator = CloudFoundry::AppNameGenerator.new params[:external_app_name], @cloud
+  generated_name =  generator.find_available_app_name(params[:external_email], params[:external_app_name], app_name)
 
   @app_clone_request = nil
   if generated_name
@@ -289,41 +291,45 @@ post '/apps/:app_name/deploy' do |app_name|
           end
 
           app = CloudFoundry::App.new(@vmcclient, @app_info, @cloud)
-          if (params[:new_name] != @app_clone_request.cf_app_name)
-            unless CloudFoundry::App.is_valid_subdomain(params[:new_name])
-              raise "'#{params[:new_name]}' is not a valid subdomain name"
-            end
-            app.change_name! params[:new_name]
-          end
+          app.change_name! params[:new_name] if (params[:new_name] != @app_clone_request.cf_app_name)
+
           if (app.exists?)
             debug_log "App #{params[:new_name]} already exists. Skipping deployment"
             flash[:notice] = "Failed to deploy app #{params[:new_name]} because it already exists. Please select a new name to deploy if you need it."
           else
             debug_log "About to create App"
-            app.create(:pick_another_name_if_taken => true)
-
+            app.create
             debug_log "Created App -- now copying code"
-            app.copy_code
-
-            debug_log "Copied Code -- now starting app"
-            app.start
-
-            debug_log "App Started -- now updating owner"
-            @app_clone_request.update_attribute :cf_username, session[:email]
-            debug_log "Owner Updated"
-
-
-            @changed_name = false
-            if (app.name_changed)
-              debug_log "Changing name of app in records"
-              @app_clone_request.update_attribute :cf_app_name, app.display_name
-              debug_log "Done changing name"
-              @changed_name = true
+            failed = false
+            begin
+              app.copy_code
+              debug_log "Copied Code -- now starting app"
+              app.start
+            rescue Exception => ex
+              app.delete
+              debug_log "Error #{ex} starting app for #{session[:email]} More at: #{ex.inspect}"
+              flash[:notice] = "Failed to start app #{params[:new_name]} due to #{ex} please check name requested and try again."
+              failed = true
             end
-            new_url = "/apps/#{app_name}/success?#{@changed_name ?"changed_name=1&" : ''}external_email=#{escaped_ext_email}&external_app_name=#{escaped_ext_app_name}"
 
-            debug_log "Redirecting to #{new_url} changed_name is #{@changed_name}"
-            redirect new_url
+            unless failed
+              debug_log "App Started -- now updating clone request"
+              @app_clone_request.cf_username = session[:email]
+
+              new_url = "/apps/#{app_name}/success?"
+              @changed_name = false
+              if (app.name_changed)
+                @app_clone_request.cf_app_name = app.display_name
+                @changed_name = true
+                new_url += "changed_name=1&"
+              end
+              @app_clone_request.save!
+              debug_log "App Clone Request Updated"
+              new_url += "external_email=#{escaped_ext_email}&external_app_name=#{escaped_ext_app_name}"
+
+              debug_log "Redirecting to #{new_url}"
+              redirect new_url
+            end
           end
         rescue Exception => ex
           debug_log "Error #{ex} pushing app for #{session[:email]} More at: #{ex.inspect}"
