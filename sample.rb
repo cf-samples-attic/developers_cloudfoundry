@@ -1,5 +1,6 @@
 require 'rubygems'
 require 'sinatra'
+require 'rest-client'
 require 'json'
 require 'vmc/client'
 require 'rack-flash'
@@ -200,8 +201,8 @@ post '/apps/:app_name/reserve' do |app_name|
   halt [401, "Missing developer's app name"] unless params[:external_app_name] # name of app on the 3rd party service
   halt [401, "Missing developer's email"] unless params[:external_email]   #email for developer
 
-  generator = CloudFoundry::AppNameGenerator.new params[:external_app_name], @cloud
-  generated_name =  generator.find_available_app_name(params[:external_email], params[:external_app_name], app_name)
+  generator = CloudFoundry::AppNameGenerator.new params[:external_app_name], app_name, params[:external_email], @cloud
+  generated_name =  generator.find_available_app_name
 
   @app_clone_request = nil
   if generated_name
@@ -290,7 +291,8 @@ post '/apps/:app_name/deploy' do |app_name|
             @app_info.env_vars[var_name] = params[var_name]
           end
 
-          app = CloudFoundry::App.new(@vmcclient, @app_info, @cloud)
+          generator = CloudFoundry::AppNameGenerator.new params[:new_name], app_name, params[:external_email], @cloud
+          app = CloudFoundry::App.new(@vmcclient, @app_info, generator, @cloud)
           app.change_name! params[:new_name] if (params[:new_name] != @app_clone_request.cf_app_name)
 
           if (app.exists?)

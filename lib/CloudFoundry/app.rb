@@ -7,13 +7,13 @@ module CloudFoundry
 
     attr_accessor :name_changed, :display_name
 
-    def initialize(vmc_client, meta, cloud=DEFAULT_CF)
+    def initialize(vmc_client, meta, generator, cloud=DEFAULT_CF)
       @cloud = cloud
       @name_changed = false
       @vmcclient = vmc_client
       @app_meta = meta
       build_manifest!
-      @generator = AppNameGenerator.new @app_meta.display_name, @cloud
+      @generator = generator
     end
 
     def create()
