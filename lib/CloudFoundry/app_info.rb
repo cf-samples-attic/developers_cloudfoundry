@@ -74,7 +74,7 @@ module CloudFoundry
     end
 
     def build_zip
-      "#{Dir.tmpdir}/#{display_name}-#{repo.tag_or_branch}.zip"
+      "#{Dir.tmpdir}/build-#{repo.dir_name}.zip"
     end
 
     def build_is_ready?

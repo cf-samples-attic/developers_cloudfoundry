@@ -47,5 +47,19 @@ describe "AppInfo" do
       File.exists?(build_zip).should be_true
       obj.build_is_ready?.should be_true
     end
+
+    it "should not make the build again" do
+      obj = CloudFoundry::AppInfo.new :app_id => 10, :display_name => "Spaceship", :runtime => 'ruby19', :framework => 'sinatra', :cloneable => true
+      obj.repo = GitHub::RepositorySnapshot.new :url => "https://github.com/cloudfoundry-samples/box-sample-ruby-app", :commit => "e84963c", :tag => 'v1.0'
+
+      obj.build_is_ready?.should be_true
+    end
+
+    it "should not have a build if the commit changed" do
+      obj = CloudFoundry::AppInfo.new :app_id => 10, :display_name => "Spaceship", :runtime => 'ruby19', :framework => 'sinatra', :cloneable => true
+      obj.repo = GitHub::RepositorySnapshot.new :url => "https://github.com/cloudfoundry-samples/box-sample-ruby-app", :commit => "dddd", :tag => 'v1.0'
+
+      obj.build_is_ready?.should be_false
+    end
   end
 end
