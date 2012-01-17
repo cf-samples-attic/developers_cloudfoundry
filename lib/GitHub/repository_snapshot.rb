@@ -1,5 +1,6 @@
 module GitHub
   class RepositorySnapshot
+    include TmpZip
     include Mongoid::Document
 
     field :url, :type => String
@@ -40,6 +41,37 @@ module GitHub
     def zip_url
       "#{url}/zipball/#{tag_or_branch}"
     end
+
+    def dir_name
+      "#{local_name}-#{commit}"
+    end
+
+    def extracted_dir
+      "#{Dir.tmpdir}/#{dir_name}/"
+    end
+
+    def has_download?
+      (Dir.exists? extracted_dir)
+    end
+
+    def download!
+      unless has_download?
+        tmp_file = "#{Dir.tmpdir}raw-#{parent}-#{name}.zip"
+        get(tmp_file, zip_url)
+        #extracts to extracted_dir
+        actual_dir = unpack(tmp_file, Dir.tmpdir)
+
+        if actual_dir !~ /#{dir_name}\/?/
+          raise "Error expected #{/#{dir_name}\/?/}, but got #{actual_dir}"
+        end
+      end
+
+      if get_files_to_pack(extracted_dir).empty?
+        raise "#{extracted_dir} is empty - We cannot deploy an app with no source code"
+      end
+      extracted_dir
+    end
+
 
   end
 end

@@ -1,4 +1,5 @@
 require_relative '../lib/CloudFoundry/mongoid'
+require_relative '../lib/tmp_zip'
 require_relative '../lib/GitHub/repository_snapshot'
 
 describe "RepositorySnapshot" do
@@ -38,5 +39,27 @@ describe "RepositorySnapshot" do
     obj.should_not be_valid
     obj.name.should be_nil
     obj.parent.should be_nil
+  end
+
+  describe "Downloads" do
+    after(:all) do
+      FileUtils.rm_rf(Dir["#{Dir.tmpdir}/*"])
+    end
+
+    it "can download the repo snapshot" do
+      obj = GitHub::RepositorySnapshot.new :url => "https://github.com/cloudfoundry-samples/box-sample-ruby-app", :commit => 'e84963c', :tag => 'v1.0'
+
+      obj.has_download?.should be_false
+
+      obj.download!
+      obj.has_download?.should be_true
+    end
+
+    it "should not download the repo again" do
+      obj = GitHub::RepositorySnapshot.new :url => "https://github.com/cloudfoundry-samples/box-sample-ruby-app", :commit => 'e84963c', :tag => 'v1.0'
+      obj.has_download?.should be_true
+      obj.download!
+      obj.has_download?.should be_true
+    end
   end
 end

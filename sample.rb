@@ -5,6 +5,7 @@ require 'vmc/client'
 require 'rack-flash'
 require 'haml'
 
+require_relative 'lib/tmp_zip'
 require_relative 'lib/CloudFoundry/mongoid'
 require_relative 'lib/CloudFoundry/app_info'
 require_relative 'lib/CloudFoundry/app'

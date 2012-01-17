@@ -1,11 +1,7 @@
-require 'tmpdir'
-require 'open-uri'
-require 'zip/zipfilesystem'
-
 # Original Author: Dave McCrory in repo cf-meta
+
 module CloudFoundry
   class App
-    PACK_EXCLUSION_GLOBS = ['..', '.', '*~', '#*#', '*.log']
     DEFAULT_CF = ".cloudfoundry.com"
     MAX_NAME_TRIES = 10
 
@@ -105,32 +101,7 @@ module CloudFoundry
     end
 
     def copy_code()
-      extracted_dir = "#{Dir.tmpdir}/#{@app_meta.repo.name}-#{@app_meta.repo.commit}"
-
-      unless (Dir.exists? extracted_dir)
-        puts "Downloading to directory #{extracted_dir}"
-        tmp_file = "#{Dir.tmpdir}raw-#{@app_meta.display_name}.zip"
-        get(tmp_file, @app_meta.zip_url)
-        #extracts to extracted_dir
-        actual_dir = unpack(tmp_file, Dir.tmpdir)
-
-        if actual_dir != extracted_dir
-          raise "Error expected #{extracted_dir}, but got #{actual_dir}"
-        end
-      else
-        puts "Great news the source repo directory #{extracted_dir} already exists"
-      end
-
-      if get_files_to_pack(extracted_dir).empty?
-        raise "#{extracted_dir} is empty - We cannot deploy an app with no source code"
-      end
-      zipfile = "#{Dir.tmpdir}/#{@app_meta.display_name}-#{@app_meta.repo.tag_or_branch}.zip"
-      if  File::exists?("#{zipfile}")
-        puts "We already have the packed zip #{zipfile}"
-      else
-        pack(extracted_dir, zipfile)
-      end
-      @vmcclient.upload_app(@app_meta.display_name, zipfile)
+      @vmcclient.upload_app(@app_meta.display_name, @app_meta.build!)
     end
 
     def exists?
@@ -157,13 +128,6 @@ module CloudFoundry
       @info
     end
 
-    #Helper method to download zips from Github
-    def get(name,path='/')
-      open(name, 'wb') do |getfile|
-        getfile.print open(path).read
-      end
-    end
-
     def change_name! new_name
       @app_meta.display_name = new_name
       @name_changed = true
@@ -171,35 +135,6 @@ module CloudFoundry
     end
 
     private
-      def get_files_to_pack(dir)
-        Dir.glob("#{dir}/**/*", File::FNM_DOTMATCH).select do |f|
-          process = true
-          PACK_EXCLUSION_GLOBS.each { |e| process = false if File.fnmatch(e, File.basename(f)) }
-          process && File.exists?(f)
-        end
-      end
-
-      def pack(dir, zipfile)
-        File::delete("#{zipfile}") if File::exists?("#{zipfile}")
-        Zip::ZipFile::open(zipfile, true) do |zf|
-          get_files_to_pack(dir).each do |f|
-            zf.add(f.sub("#{dir}/",''), f)
-          end
-        end
-      end
-
-      def unpack(file, dest)
-        actual_dir = nil
-        Zip::ZipFile.foreach(file) do |zentry|
-          epath = "#{dest}/#{zentry}"
-          # The first item is the directory so get its name
-          actual_dir = zentry unless actual_dir
-          dirname = File.dirname(epath)
-          FileUtils.mkdir_p(dirname) unless File.exists?(dirname)
-          zentry.extract(epath) unless File.exists?(epath)
-        end
-        actual_dir
-      end
 
       def build_manifest!
         @display_name = @app_meta.display_name

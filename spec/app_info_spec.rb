@@ -1,4 +1,5 @@
 require_relative '../lib/CloudFoundry/mongoid'
+require_relative '../lib/tmp_zip'
 require_relative '../lib/CloudFoundry/app_info'
 require_relative '../lib/CloudFoundry/app_clone_request'
 require_relative '../lib/GitHub/repository_snapshot'
@@ -29,5 +30,22 @@ describe "AppInfo" do
     obj.repo = GitHub::RepositorySnapshot.new :url => "https://github.com/cloudfoundry-samples/box-sample-ruby-app", :commit => "e84963c", :tag => 'v1.0'
 
     obj.should be_valid
+  end
+
+  describe "Builds" do
+
+    after(:all) do
+      FileUtils.rm_rf(Dir["#{Dir.tmpdir}/*"])
+    end
+
+    it "can do a build to push to CF" do
+      obj = CloudFoundry::AppInfo.new :app_id => 10, :display_name => "Spaceship", :runtime => 'ruby19', :framework => 'sinatra', :cloneable => true
+      obj.repo = GitHub::RepositorySnapshot.new :url => "https://github.com/cloudfoundry-samples/box-sample-ruby-app", :commit => "e84963c", :tag => 'v1.0'
+
+      obj.build_is_ready?.should be_false
+      build_zip = obj.build!
+      File.exists?(build_zip).should be_true
+      obj.build_is_ready?.should be_true
+    end
   end
 end

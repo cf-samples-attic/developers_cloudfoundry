@@ -1,5 +1,6 @@
 module CloudFoundry
   class AppInfo
+    include TmpZip
     include Mongoid::Document
 
     embeds_many :app_clone_requests
@@ -70,6 +71,19 @@ module CloudFoundry
       else
         self.save!
       end
-  end
+    end
+
+    def build_zip
+      "#{Dir.tmpdir}/#{display_name}-#{repo.tag_or_branch}.zip"
+    end
+
+    def build_is_ready?
+      File::exists? build_zip
+    end
+
+    def build!
+      pack(repo.download!, build_zip) unless build_is_ready?
+      build_zip
+    end
   end
 end
