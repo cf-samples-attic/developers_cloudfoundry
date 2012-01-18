@@ -1,0 +1,17 @@
+--- 
+applications: 
+  .: 
+    name: cloner
+    url: ${name}.${target-base}
+    runtime: ruby19
+    framework: 
+      name: sinatra
+      info: 
+        mem: 128M
+        description: Sinatra Application
+        exec: ruby sample.rb
+    mem: 128M
+    instances: 1
+    services: 
+      mongodb-gallery:
+        type: :mongodb
