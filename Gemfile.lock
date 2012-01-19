@@ -10,6 +10,7 @@ GEM
     bson (1.4.0)
     bson_ext (1.4.0)
     builder (3.0.0)
+    diff-lcs (1.1.3)
     haml (3.1.3)
     i18n (0.6.0)
     interact (0.2)
@@ -30,13 +31,25 @@ GEM
       rack
     rack-protection (1.1.4)
       rack
+    rack-test (0.6.1)
+      rack (>= 1.0)
     rest-client (1.6.7)
       mime-types (>= 1.16)
+    rspec (2.8.0)
+      rspec-core (~> 2.8.0)
+      rspec-expectations (~> 2.8.0)
+      rspec-mocks (~> 2.8.0)
+    rspec-core (2.8.0)
+    rspec-expectations (2.8.0)
+      diff-lcs (~> 1.1.2)
+    rspec-mocks (2.8.0)
     rubyzip2 (2.0.1)
+    shotgun (0.9)
+      rack (>= 1.0)
     sinatra (1.3.1)
-      rack (>= 1.3.4, ~> 1.3)
-      rack-protection (>= 1.1.2, ~> 1.1)
-      tilt (>= 1.3.3, ~> 1.3)
+      rack (~> 1.3, >= 1.3.4)
+      rack-protection (~> 1.1, >= 1.1.2)
+      tilt (~> 1.3, >= 1.3.3)
     spruz (0.2.13)
     terminal-table (1.4.4)
     tilt (1.3.3)
@@ -44,7 +57,7 @@ GEM
     vmc (0.3.13)
       interact (~> 0.2.0)
       json_pure (~> 1.5.1)
-      rest-client (< 1.7.0, >= 1.6.1)
+      rest-client (>= 1.6.1, < 1.7.0)
       rubyzip2 (~> 2.0.1)
       terminal-table (~> 1.4.2)
     zip (2.0.2)
@@ -59,6 +72,9 @@ DEPENDENCIES
   mongoid (~> 2.2.4)
   newrelic_rpm
   rack-flash
+  rack-test
+  rspec
+  shotgun
   sinatra
   vmc
   zip (~> 2.0.2)
