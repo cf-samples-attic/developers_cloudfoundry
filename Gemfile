@@ -1,6 +1,7 @@
 source 'http://rubygems.org'
 
 gem 'sinatra'
+gem 'shotgun'
 gem 'rack-flash', '0.1.3'
 gem 'json'
 gem 'haml'
