@@ -50,7 +50,17 @@
                       Welcome
                       %strong=session[:email]
                       |
+                      Target:
+                      %strong
+                        ="api#{@cloud}"
+                      |
                       %a{:href => "/logout"} Logout
+                  -else
+                    %li
+                      Target:
+                      %select
+                        -@@clouds.each do |c|
+                          %option{:selected => (c == @cloud)}="api#{c}"
       #main.container
         .content-wrap
           -unless (session.has_key?(:email))

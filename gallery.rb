@@ -48,6 +48,8 @@ configure do
   qa_box_app = box_app.clone
   qa_box_app.display_name = "#{qa_box_app.display_name}-qa"
   qa_box_app.create_or_update_attributes!
+
+  @@clouds = ['.cloudfoundry.com', '.cloudfoundry.me']
 end
 
 helpers do
@@ -126,7 +128,7 @@ before do
   @title = "Gallery"
   @canonical_url = request.url
   @fb_app_id = ENV['facebook_app_id']
-  @cloud = ENV['cloud'] || '.cloudfoundry.com'
+  @cloud = session[:cloud] || ENV['cloud'] || '.cloudfoundry.com'
 
   @target = "api#{@cloud}"
   @www_url = "http://www#{@cloud}"
@@ -317,6 +319,7 @@ post '/apps/:app_name/deploy' do |app_name|
             unless failed
               debug_log "App Started -- now updating clone request"
               @app_clone_request.cf_username = session[:email]
+              @app_clone_request.cloud = @cloud
 
               new_url = "/apps/#{app_name}/success?"
               @changed_name = false

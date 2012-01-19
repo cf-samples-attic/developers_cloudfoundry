@@ -30,6 +30,7 @@ module CloudFoundry
           end
 
           config.master = db
+          @@grid = Mongo::GridFileSystem.new(db)
         end
      end
   end
