@@ -1,9 +1,8 @@
 source 'http://rubygems.org'
 
 gem 'sinatra'
-gem 'rack', "1.3.6" # For https://github.com/rack/rack/commit/08e0eb07ae555ab08db8cbf82236dec573839d2d
 gem 'shotgun'
-gem 'rack-flash', '0.1.3'
+gem 'rack-flash'
 gem 'json'
 gem 'haml'
 gem 'vmc'
