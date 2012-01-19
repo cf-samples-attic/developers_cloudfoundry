@@ -61,8 +61,8 @@ module GitHub
         #extracts to extracted_dir
         actual_dir = unpack(tmp_file, Dir.tmpdir)
 
-        if actual_dir !~ /#{dir_name}\/?/
-          raise "Error expected #{/#{dir_name}\/?/}, but got #{actual_dir}"
+        if actual_dir.index(dir_name) == 0
+          raise "Error expected '#{dir_name}', but got '#{actual_dir}'"
         end
       end
 
